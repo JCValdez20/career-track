@@ -1,7 +1,8 @@
-// components/auth/GoogleLoginButton.tsx
+
 "use client";
 
 import { useState } from "react";
+import { signInWithGoogle } from "@/app/actions/auth";
 
 interface GoogleLoginButtonProps {
     label?: string;
@@ -15,14 +16,9 @@ export default function GoogleLoginButton({
     const handleGoogleLogin = async () => {
         setLoading(true);
         try {
-            // TODO: wire up actual Google OAuth flow here.
-            // e.g. NextAuth: signIn("google")
-            // e.g. Firebase: signInWithPopup(auth, googleProvider)
-            // e.g. custom: redirect to your backend's /auth/google endpoint
-            console.log("Google login clicked");
+            await signInWithGoogle();
         } catch (error) {
             console.error("Google login failed:", error);
-        } finally {
             setLoading(false);
         }
     };

@@ -55,7 +55,8 @@ export default function Navbar() {
                         alt="CareerTrack Logo"
                         width={160}
                         height={40}
-                        className="w-20 sm:w-30 h-auto object-contain"
+                        className="w-20 sm:w-30 object-contain"
+                        style={{ height: "auto" }}
                         priority
                     />
                 </Link>

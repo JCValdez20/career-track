@@ -8,17 +8,13 @@
 
 @layer base {
 
-  /* Set the default to dark mode for the landing page */
+
   :root {
     --background: #09090b;
-    /* Deep zinc black */
     --foreground: #fafafa;
-    /* Crisp off-white text */
     --card: #18181b;
-    /* Slightly lighter for feature cards */
   }
 
-  /* We can leave this here for later if you ever add a light mode toggle */
   .light {
     --background: #ffffff;
     --foreground: #171717;

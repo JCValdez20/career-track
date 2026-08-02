@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import AuthToggle from "@/components/auth/AuthToggle";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
+import { signIn } from "@/app/actions/auth";
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
+    const [state, formAction, isPending] = useActionState(signIn, { error: null });
+    const searchParams = useSearchParams();
+    const justRegistered = searchParams.get("registered") === "true";
 
     return (
         <div className="min-h-screen flex bg-white">
@@ -33,7 +38,8 @@ export default function Login() {
                             alt="CareerTrack"
                             width={144}
                             height={36}
-                            className="w-36 h-auto object-contain hover:opacity-90 transition-opacity"
+                            className="w-36 object-contain hover:opacity-90 transition-opacity"
+                            style={{ height: "auto" }}
                             priority
                         />
                     </Link>
@@ -89,7 +95,8 @@ export default function Login() {
                                 alt="CareerTrack"
                                 width={112}
                                 height={28}
-                                className="w-28 h-auto object-contain hover:opacity-90 transition-opacity"
+                                className="w-28 object-contain hover:opacity-90 transition-opacity"
+                                style={{ height: "auto" }}
                                 priority
                             />
                         </Link>
@@ -106,25 +113,44 @@ export default function Login() {
                         </p>
                     </div>
 
-                    <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                    {justRegistered && (
+                        <div className="flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 mb-5">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                            <p className="text-sm text-emerald-700">
+                                Account created! Check your email to verify, then sign in.
+                            </p>
+                        </div>
+                    )}
+
+                    {state.error && (
+                        <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 mb-5">
+                            <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
+                            <p className="text-sm text-red-700">{state.error}</p>
+                        </div>
+                    )}
+
+                    <form className="space-y-4" action={formAction}>
                         <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                            <label htmlFor="login-email" className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                                 Email Address
                             </label>
                             <div className="relative">
                                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                                 <input
+                                    id="login-email"
+                                    name="email"
                                     type="email"
                                     placeholder="name@company.com"
                                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
                                     required
+                                    autoComplete="email"
                                 />
                             </div>
                         </div>
 
                         <div>
                             <div className="flex items-center justify-between mb-1.5">
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                                <label htmlFor="login-password" className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
                                     Password
                                 </label>
                                 <a href="#" className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
@@ -134,10 +160,13 @@ export default function Login() {
                             <div className="relative">
                                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                                 <input
+                                    id="login-password"
+                                    name="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
                                     className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
                                     required
+                                    autoComplete="current-password"
                                 />
                                 <button
                                     type="button"
@@ -162,10 +191,20 @@ export default function Login() {
 
                         <button
                             type="submit"
-                            className="w-full mt-2 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white text-sm font-semibold py-2.5 rounded-xl shadow-sm hover:shadow transition-all duration-150"
+                            disabled={isPending}
+                            className="w-full mt-2 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white text-sm font-semibold py-2.5 rounded-xl shadow-sm hover:shadow transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            <span>Sign in</span>
-                            <ArrowRight className="w-4 h-4" />
+                            {isPending ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    <span>Signing in...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Sign in</span>
+                                    <ArrowRight className="w-4 h-4" />
+                                </>
+                            )}
                         </button>
                     </form>
 
@@ -183,4 +222,4 @@ export default function Login() {
 
         </div>
     );
-}
+}

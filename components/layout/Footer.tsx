@@ -30,7 +30,8 @@ export default function Footer() {
                             alt="CareerTrack Logo"
                             width={200}
                             height={50}
-                            className="w-30 sm:w-37.5 md:w-45 h-auto object-contain transition-transform group-hover:scale-105"
+                            className="w-30 sm:w-37.5 md:w-45 object-contain transition-transform group-hover:scale-105"
+                            style={{ height: "auto" }}
                         />
                     </Link>
                 </Reveal>

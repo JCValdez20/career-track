@@ -1,15 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useActionState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, ArrowLeft, AlertCircle, Loader2 } from "lucide-react";
 import AuthToggle from "@/components/auth/AuthToggle";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
+import { signUp } from "@/app/actions/auth";
 
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [matchError, setMatchError] = useState<string | null>(null);
+    const confirmRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
+
+    const [state, formAction, isPending] = useActionState(signUp, { error: null });
+
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        if (passwordRef.current?.value !== confirmRef.current?.value) {
+            e.preventDefault();
+            setMatchError("Passwords do not match.");
+            return;
+        }
+        setMatchError(null);
+    }
+
+    const displayError = matchError ?? state.error;
 
     return (
         <div className="min-h-screen flex bg-white">
@@ -35,7 +52,8 @@ export default function Register() {
                             alt="CareerTrack"
                             width={144}
                             height={36}
-                            className="w-36 h-auto object-contain hover:opacity-90 transition-opacity"
+                            className="w-36 object-contain hover:opacity-90 transition-opacity"
+                            style={{ height: "auto" }}
                             priority
                         />
                     </Link>
@@ -91,7 +109,8 @@ export default function Register() {
                                 alt="CareerTrack"
                                 width={112}
                                 height={28}
-                                className="w-28 h-auto object-contain hover:opacity-90 transition-opacity"
+                                className="w-28 object-contain hover:opacity-90 transition-opacity"
+                                style={{ height: "auto" }}
                                 priority
                             />
                         </Link>
@@ -108,48 +127,65 @@ export default function Register() {
                         </p>
                     </div>
 
-                    <form className="space-y-3.5" onSubmit={(e) => e.preventDefault()}>
+                    {displayError && (
+                        <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 mb-5">
+                            <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
+                            <p className="text-sm text-red-700">{displayError}</p>
+                        </div>
+                    )}
+
+                    <form className="space-y-3.5" action={formAction} onSubmit={handleSubmit}>
                         <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                            <label htmlFor="reg-name" className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                                 Full Name
                             </label>
                             <div className="relative">
                                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                                 <input
+                                    id="reg-name"
+                                    name="fullName"
                                     type="text"
                                     placeholder="Jane Cooper"
                                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
                                     required
+                                    autoComplete="name"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                            <label htmlFor="reg-email" className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                                 Email Address
                             </label>
                             <div className="relative">
                                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                                 <input
+                                    id="reg-email"
+                                    name="email"
                                     type="email"
                                     placeholder="name@company.com"
                                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
                                     required
+                                    autoComplete="email"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                            <label htmlFor="reg-password" className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                                 Password
                             </label>
                             <div className="relative">
                                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                                 <input
+                                    id="reg-password"
+                                    name="password"
+                                    ref={passwordRef}
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
                                     className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
                                     required
+                                    autoComplete="new-password"
                                 />
                                 <button
                                     type="button"
@@ -163,16 +199,19 @@ export default function Register() {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                            <label htmlFor="reg-confirm" className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                                 Confirm Password
                             </label>
                             <div className="relative">
                                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                                 <input
+                                    id="reg-confirm"
+                                    ref={confirmRef}
                                     type={showConfirm ? "text" : "password"}
                                     placeholder="••••••••"
                                     className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
                                     required
+                                    autoComplete="new-password"
                                 />
                                 <button
                                     type="button"
@@ -205,10 +244,20 @@ export default function Register() {
 
                         <button
                             type="submit"
-                            className="w-full mt-2 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white text-sm font-semibold py-2.5 rounded-xl shadow-sm hover:shadow transition-all duration-150"
+                            disabled={isPending}
+                            className="w-full mt-2 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white text-sm font-semibold py-2.5 rounded-xl shadow-sm hover:shadow transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            <span>Create account</span>
-                            <ArrowRight className="w-4 h-4" />
+                            {isPending ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    <span>Creating account...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Create account</span>
+                                    <ArrowRight className="w-4 h-4" />
+                                </>
+                            )}
                         </button>
                     </form>
 
