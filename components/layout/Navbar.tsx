@@ -17,6 +17,13 @@ const NAV_LINKS = [
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [open, setOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        // Delay mounting slightly so the slide-in animation is visible
+        const id = setTimeout(() => setMounted(true), 50);
+        return () => clearTimeout(id);
+    }, []);
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 8);
@@ -28,7 +35,8 @@ export default function Navbar() {
     return (
         <header
             className={cn(
-                "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+                "fixed inset-x-0 top-0 z-50 transition-all duration-500",
+                mounted ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0",
                 scrolled || open
                     ? "border-b border-white/10 bg-background/95 backdrop-blur-md"
                     : "border-b border-transparent bg-transparent"
@@ -45,9 +53,8 @@ export default function Navbar() {
                     <Image
                         src="/images/logov2.png"
                         alt="CareerTrack Logo"
-                        width={150}
-                        height={150}
-
+                        width={160}
+                        height={40}
                         className="w-20 sm:w-30 h-auto object-contain"
                         priority
                     />

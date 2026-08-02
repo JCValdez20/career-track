@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, ArrowLeft } from "lucide-react";
 import AuthToggle from "@/components/auth/AuthToggle";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 
@@ -13,7 +14,7 @@ export default function Register() {
     return (
         <div className="min-h-screen flex bg-white">
 
-            {/* Left Panel: Feature Hero (Hidden on Mobile) */}
+
             <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-slate-950">
                 <Image
                     src="/images/authimage.jpg"
@@ -23,21 +24,22 @@ export default function Register() {
                     sizes="(min-width: 1024px) 50vw, 0vw"
                     className="object-cover opacity-40"
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/90 via-slate-900/80 to-slate-950/95" />
+                <div className="absolute inset-0 bg-linear-to-br from-indigo-950/90 via-slate-900/80 to-slate-950/95" />
 
                 <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full max-w-xl mx-auto">
 
-                    {/* Smaller Logo */}
-                    <Image
-                        src="/images/logov2.png"
-                        alt="CareerTrack"
-                        width={96}
-                        height={24}
-                        className="w-24 h-auto object-contain"
-                        priority
-                    />
 
-                    {/* Value Prop */}
+                    <Link href="/" className="inline-block w-fit" aria-label="Back to home">
+                        <Image
+                            src="/images/logov2.png"
+                            alt="CareerTrack"
+                            width={144}
+                            height={36}
+                            className="w-36 h-auto object-contain hover:opacity-90 transition-opacity"
+                            priority
+                        />
+                    </Link>
+
                     <div className="space-y-4 my-auto py-12">
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
                             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
@@ -47,7 +49,7 @@ export default function Register() {
                         </div>
                         <h1 className="text-4xl font-bold tracking-tight leading-tight">
                             Your entire career, <br />
-                            <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
+                            <span className="bg-linear-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
                                 beautifully organized.
                             </span>
                         </h1>
@@ -56,7 +58,6 @@ export default function Register() {
                         </p>
                     </div>
 
-                    {/* Stats Card - Glassmorphism */}
                     <div className="grid grid-cols-2 gap-6 p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
                         <div>
                             <p className="text-2xl font-bold tracking-tight text-white">12k+</p>
@@ -71,20 +72,29 @@ export default function Register() {
                 </div>
             </div>
 
-            {/* Right Panel: Register Form */}
             <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 overflow-y-auto">
                 <div className="w-full max-w-sm py-6">
 
-                    {/* Mobile Logo (Smaller) */}
+                    <Link
+                        href="/"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors mb-6 group"
+                    >
+                        <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                        <span>Back to home</span>
+                    </Link>
+
+
                     <div className="flex lg:hidden mb-8">
-                        <Image
-                            src="/images/logov2.png"
-                            alt="CareerTrack"
-                            width={80}
-                            height={20}
-                            className="w-20 h-auto object-contain"
-                            priority
-                        />
+                        <Link href="/" aria-label="Back to home">
+                            <Image
+                                src="/images/logov2.png"
+                                alt="CareerTrack"
+                                width={112}
+                                height={28}
+                                className="w-28 h-auto object-contain hover:opacity-90 transition-opacity"
+                                priority
+                            />
+                        </Link>
                     </div>
 
                     <AuthToggle active="register" />

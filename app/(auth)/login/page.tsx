@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft } from "lucide-react";
 import AuthToggle from "@/components/auth/AuthToggle";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 
@@ -26,16 +27,16 @@ export default function Login() {
 
                 <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full max-w-xl mx-auto">
 
-
-                    <Image
-                        src="/images/logov2.png"
-                        alt="CareerTrack"
-                        width={96}
-                        height={24}
-                        className="w-24 h-auto object-contain"
-                        priority
-                    />
-
+                    <Link href="/" className="inline-block w-fit" aria-label="Back to home">
+                        <Image
+                            src="/images/logov2.png"
+                            alt="CareerTrack"
+                            width={144}
+                            height={36}
+                            className="w-36 h-auto object-contain hover:opacity-90 transition-opacity"
+                            priority
+                        />
+                    </Link>
 
                     <div className="space-y-4 my-auto py-12">
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
@@ -72,15 +73,26 @@ export default function Login() {
             <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 overflow-y-auto">
                 <div className="w-full max-w-sm">
 
+
+                    <Link
+                        href="/"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors mb-6 group"
+                    >
+                        <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                        <span>Back to home</span>
+                    </Link>
+
                     <div className="flex lg:hidden mb-8">
-                        <Image
-                            src="/images/logov2.png"
-                            alt="CareerTrack"
-                            width={80}
-                            height={20}
-                            className="w-20 h-auto object-contain"
-                            priority
-                        />
+                        <Link href="/" aria-label="Back to home">
+                            <Image
+                                src="/images/logov2.png"
+                                alt="CareerTrack"
+                                width={112}
+                                height={28}
+                                className="w-28 h-auto object-contain hover:opacity-90 transition-opacity"
+                                priority
+                            />
+                        </Link>
                     </div>
 
                     <AuthToggle active="login" />
