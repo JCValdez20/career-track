@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const FOOTER_LINKS = [
     { href: "#problems", label: "Problems" },
@@ -11,23 +12,24 @@ export default function Footer() {
     return (
         <footer className="relative border-t border-white/10 py-12 overflow-hidden">
 
-
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-60 w-120 -z-10 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
-
 
             <div className="mx-auto max-w-6xl px-6 flex flex-col items-center justify-center gap-8">
 
-
                 <Link
                     href="/"
-                    className="flex items-center gap-2.5 group"
+                    className="flex items-center group"
+                    aria-label="CareerTrack Home"
                 >
+                    <Image
+                        src="/images/logov2.png"
+                        alt="CareerTrack Logo"
+                        width={200}
+                        height={200}
 
-                    <span className="font-semibold tracking-tight text-white text-base sm:text-lg md:text-xl">
-                        CareerTrack
-                    </span>
+                        className="w-30 sm:w-37.5 md:w-45 h-auto object-contain transition-transform group-hover:scale-105"
+                    />
                 </Link>
-
 
                 <ul className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-10">
                     {FOOTER_LINKS.map((link) => (
@@ -41,7 +43,6 @@ export default function Footer() {
                         </li>
                     ))}
                 </ul>
-
 
                 <div className="mt-4 flex flex-col items-center gap-2 text-foreground/40 text-[10px] sm:text-xs md:text-sm">
                     <p>© {new Date().getFullYear()} CareerTrack. All rights reserved.</p>

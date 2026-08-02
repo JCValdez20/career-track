@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -33,23 +34,23 @@ export default function Navbar() {
                     : "border-b border-transparent bg-transparent"
             )}
         >
-            <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+            <nav className="mx-auto flex h-20 sm:h-24 max-w-6xl items-center justify-between px-4 sm:px-6">
 
                 <Link
                     href="/"
-                    className="flex items-center gap-1.5 sm:gap-2.5 shrink-0"
+                    className="flex items-center shrink-0"
                     onClick={() => setOpen(false)}
+                    aria-label="CareerTrack Home"
                 >
+                    <Image
+                        src="/images/logov2.png"
+                        alt="CareerTrack Logo"
+                        width={150}
+                        height={150}
 
-                    <svg viewBox="0 0 26 26" fill="none" aria-hidden="true" className="w-5.5 h-5.5 sm:w-6.5 sm:h-6.5">
-                        <rect x="1" y="16" width="6" height="9" rx="1.5" className="fill-primary" />
-                        <rect x="10" y="10" width="6" height="15" rx="1.5" className="fill-primary/70" />
-                        <rect x="19" y="3" width="6" height="22" rx="1.5" className="fill-primary/40" />
-                    </svg>
-
-                    <span className="text-[15px] sm:text-[17px] font-semibold tracking-tight text-white">
-                        CareerTrack
-                    </span>
+                        className="w-20 sm:w-30 h-auto object-contain"
+                        priority
+                    />
                 </Link>
 
                 <ul className="hidden items-center gap-8 md:flex">
@@ -64,7 +65,6 @@ export default function Navbar() {
                         </li>
                     ))}
                 </ul>
-
 
                 <div className="flex items-center gap-1.5 sm:gap-4">
                     <Button

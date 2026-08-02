@@ -1,0 +1,62 @@
+// components/auth/GoogleLoginButton.tsx
+"use client";
+
+import { useState } from "react";
+
+interface GoogleLoginButtonProps {
+    label?: string;
+}
+
+export default function GoogleLoginButton({
+    label = "Continue with Google",
+}: GoogleLoginButtonProps) {
+    const [loading, setLoading] = useState(false);
+
+    const handleGoogleLogin = async () => {
+        setLoading(true);
+        try {
+            // TODO: wire up actual Google OAuth flow here.
+            // e.g. NextAuth: signIn("google")
+            // e.g. Firebase: signInWithPopup(auth, googleProvider)
+            // e.g. custom: redirect to your backend's /auth/google endpoint
+            console.log("Google login clicked");
+        } catch (error) {
+            console.error("Google login failed:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 border border-slate-200 rounded-lg py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+            {loading ? (
+                <span className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+            ) : (
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                    <path
+                        fill="#4285F4"
+                        d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"
+                    />
+                    <path
+                        fill="#34A853"
+                        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"
+                    />
+                    <path
+                        fill="#FBBC05"
+                        d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29A11.96 11.96 0 000 12c0 1.94.46 3.77 1.29 5.38l3.98-3.09z"
+                    />
+                    <path
+                        fill="#EA4335"
+                        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"
+                    />
+                </svg>
+            )}
+            {loading ? "Connecting..." : label}
+        </button>
+    );
+}
