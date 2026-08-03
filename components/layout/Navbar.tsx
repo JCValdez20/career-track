@@ -20,7 +20,7 @@ export default function Navbar() {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // Delay mounting slightly so the slide-in animation is visible
+
         const id = setTimeout(() => setMounted(true), 50);
         return () => clearTimeout(id);
     }, []);
@@ -76,7 +76,8 @@ export default function Navbar() {
 
                 <div className="flex items-center gap-1.5 sm:gap-4">
                     <Button
-                        href="/login"
+                        render={<Link href="/login" />}
+                        nativeButton={false}
                         variant="ghost"
                         size="sm"
                         className="hidden md:inline-flex text-foreground/70 hover:text-white hover:bg-transparent transition-colors"
@@ -85,24 +86,15 @@ export default function Navbar() {
                     </Button>
 
                     <Button
-                        href="/register"
-                        variant="primary"
+                        render={<Link href="/register" />}
+                        nativeButton={false}
+                        variant="default"
                         size="sm"
                         className="gap-1.5 sm:gap-2 bg-white text-black hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all duration-200 ring-1 ring-white/20 shadow-lg px-2.5 sm:px-4 text-[11px] sm:text-sm whitespace-nowrap"
                     >
                         <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse shrink-0" />
                         Get started
                     </Button>
-
-                    <button
-                        type="button"
-                        onClick={() => setOpen((v) => !v)}
-                        aria-label={open ? "Close menu" : "Open menu"}
-                        aria-expanded={open}
-                        className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-md text-foreground/70 hover:bg-white/5 hover:text-white md:hidden transition-colors shrink-0"
-                    >
-                        {open ? <X size={20} className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu size={20} className="w-5 h-5 sm:w-6 sm:h-6" />}
-                    </button>
                 </div>
             </nav>
 
@@ -128,9 +120,10 @@ export default function Navbar() {
                     </ul>
                     <div className="flex flex-col gap-3 px-6 pb-6 pt-2">
                         <Button
-                            href="/login"
+                            render={<Link href="/login" />}
+                            nativeButton={false}
                             variant="outline"
-                            size="md"
+                            size="default"
                             onClick={() => setOpen(false)}
                             className="border-white/10 text-white hover:bg-white/5"
                         >

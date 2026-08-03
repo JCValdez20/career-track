@@ -1,5 +1,6 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import DashboardShell from "@/components/dashboard/DashboardShell";
+import Sidebar from "@/components/layout/Sidebar";
 
 export default async function DashboardLayout({
     children,
@@ -8,17 +9,27 @@ export default async function DashboardLayout({
 }) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
 
-
-    const userName =
-        user?.user_metadata?.full_name ||
-        user?.user_metadata?.name ||
-        "Job Seeker";
-    const userEmail = user?.email || "";
+    const sidebarUser = {
+        name:
+            user.user_metadata?.full_name ||
+            user.user_metadata?.name ||
+            user.email?.split("@")[0] ||
+            "Job Seeker",
+        email: user.email ?? "",
+        avatarUrl:
+            user.user_metadata?.avatar_url ||
+            user.user_metadata?.picture ||
+            null,
+    };
 
     return (
-        <DashboardShell userName={userName} userEmail={userEmail}>
-            {children}
-        </DashboardShell>
+        <div className="min-h-screen flex bg-background">
+            <Sidebar user={sidebarUser} />
+            <main className="light flex-1 min-w-0 overflow-y-auto p-4 pt-14 md:p-8">
+                {children}
+            </main>
+        </div>
     );
 }
