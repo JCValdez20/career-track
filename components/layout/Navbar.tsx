@@ -20,7 +20,6 @@ export default function Navbar() {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-
         const id = setTimeout(() => setMounted(true), 50);
         return () => clearTimeout(id);
     }, []);
@@ -38,7 +37,7 @@ export default function Navbar() {
                 "fixed inset-x-0 top-0 z-50 transition-all duration-500",
                 mounted ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0",
                 scrolled || open
-                    ? "border-b border-white/10 bg-background/95 backdrop-blur-md"
+                    ? "border-b border-white/10 bg-background/60 backdrop-blur-xl supports-backdrop-filter:bg-background/60"
                     : "border-b border-transparent bg-transparent"
             )}
         >
@@ -76,8 +75,7 @@ export default function Navbar() {
 
                 <div className="flex items-center gap-1.5 sm:gap-4">
                     <Button
-                        render={<Link href="/login" />}
-                        nativeButton={false}
+                        href="/login"
                         variant="ghost"
                         size="sm"
                         className="hidden md:inline-flex text-foreground/70 hover:text-white hover:bg-transparent transition-colors"
@@ -86,8 +84,7 @@ export default function Navbar() {
                     </Button>
 
                     <Button
-                        render={<Link href="/register" />}
-                        nativeButton={false}
+                        href="/register"
                         variant="default"
                         size="sm"
                         className="gap-1.5 sm:gap-2 bg-white text-black hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all duration-200 ring-1 ring-white/20 shadow-lg px-2.5 sm:px-4 text-[11px] sm:text-sm whitespace-nowrap"
@@ -95,40 +92,54 @@ export default function Navbar() {
                         <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse shrink-0" />
                         Get started
                     </Button>
+
+                    <button
+                        type="button"
+                        onClick={() => setOpen((v) => !v)}
+                        aria-label={open ? "Close menu" : "Open menu"}
+                        aria-expanded={open}
+                        className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-md text-foreground/70 hover:bg-white/5 hover:text-white md:hidden transition-colors shrink-0"
+                    >
+                        {open ? <X size={20} className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu size={20} className="w-5 h-5 sm:w-6 sm:h-6" />}
+                    </button>
                 </div>
             </nav>
 
             <div
                 className={cn(
-                    "grid bg-background/95 backdrop-blur-md transition-[grid-template-rows] duration-300 ease-out md:hidden",
-                    open ? "grid-rows-[1fr] border-b border-white/10" : "grid-rows-[0fr] border-b border-transparent"
+                    // Removed the duplicate background color from this container 
+                    // so it seamlessly inherits the main header's frosted glass blur.
+                    "grid transition-[grid-template-rows] duration-300 ease-out md:hidden",
+                    open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                 )}
             >
                 <div className="overflow-hidden">
-                    <ul className="flex flex-col gap-1 px-6 py-4">
-                        {NAV_LINKS.map((link) => (
-                            <li key={link.href}>
-                                <a
-                                    href={link.href}
-                                    onClick={() => setOpen(false)}
-                                    className="block py-2.5 text-[13px] uppercase tracking-[0.06em] text-foreground/70 hover:text-white transition-colors"
-                                >
-                                    {link.label}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                    <div className="flex flex-col gap-3 px-6 pb-6 pt-2">
-                        <Button
-                            render={<Link href="/login" />}
-                            nativeButton={false}
-                            variant="outline"
-                            size="default"
-                            onClick={() => setOpen(false)}
-                            className="border-white/10 text-white hover:bg-white/5"
-                        >
-                            Log in
-                        </Button>
+                    <div className="flex flex-col gap-2 px-4 py-6 sm:px-6">
+                        <ul className="flex flex-col gap-1.5">
+                            {NAV_LINKS.map((link) => (
+                                <li key={link.href}>
+                                    <a
+                                        href={link.href}
+                                        onClick={() => setOpen(false)}
+                                        className="flex w-full items-center rounded-xl px-4 py-3.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-foreground/70 transition-all active:scale-[0.98] active:bg-white/10 sm:hover:bg-white/5 sm:hover:pl-6 sm:hover:text-white"
+                                    >
+                                        {link.label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+
+                        <div className="mt-4 px-2 pb-2">
+                            <Button
+                                href="/login"
+                                variant="outline"
+                                size="lg"
+                                onClick={() => setOpen(false)}
+                                className="w-full rounded-xl border-white/10 bg-white/5 text-white backdrop-blur-sm sm:hover:bg-white/10"
+                            >
+                                Log in
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

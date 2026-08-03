@@ -42,7 +42,6 @@ function getInitials(name: string) {
 function UserAvatar({ user, size = 36 }: { user: SidebarUser; size?: number }) {
     if (user.avatarUrl) {
         return (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
                 src={user.avatarUrl}
                 alt={user.name}
@@ -89,19 +88,16 @@ function NavLinks({
                             href={item.href}
                             onClick={onNavigate}
                             title={collapsed ? item.name : undefined}
-                            className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40 ${
-                                collapsed ? "justify-center" : ""
-                            } ${
-                                isActive
+                            className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40 ${collapsed ? "justify-center" : ""
+                                } ${isActive
                                     ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/20"
                                     : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
-                            }`}
+                                }`}
                         >
                             <Icon className="w-5 h-5 shrink-0" />
                             {!collapsed && <span className="truncate">{item.name}</span>}
                         </Link>
 
-                        {/* Tooltip (collapsed desktop only) */}
                         {collapsed && (
                             <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-lg bg-slate-800 border border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-200 opacity-0 group-hover:opacity-100 transition-opacity z-50">
                                 {item.name}
@@ -136,12 +132,12 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
         } catch { /* ignore */ }
     }, [collapsed, mounted]);
 
-    // Close mobile drawer on route change
+
     useEffect(() => {
         setMobileOpen(false);
     }, [pathname]);
 
-    // Keyboard + scroll-lock while drawer is open
+
     useEffect(() => {
         if (!mobileOpen) return;
         const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMobileOpen(false);
@@ -155,9 +151,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
 
     return (
         <>
-            {/* ════════════════════════════════════════
-                MOBILE — fixed topbar
-            ════════════════════════════════════════ */}
+
             <div className="md:hidden fixed top-0 inset-x-0 z-30 h-14 flex items-center justify-between px-4 bg-slate-900/95 backdrop-blur-md border-b border-slate-800">
                 <button
                     onClick={() => setMobileOpen(true)}
@@ -188,26 +182,19 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                 </button>
             </div>
 
-            {/* ════════════════════════════════════════
-                MOBILE — backdrop
-            ════════════════════════════════════════ */}
+
             <div
                 onClick={() => setMobileOpen(false)}
                 aria-hidden="true"
-                className={`md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
-                    mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-                }`}
+                className={`md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+                    }`}
             />
 
-            {/* ════════════════════════════════════════
-                MOBILE — slide-in drawer
-            ════════════════════════════════════════ */}
+
             <aside
-                className={`md:hidden fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] flex flex-col bg-slate-900 border-r border-slate-800 transition-transform duration-300 ease-in-out ${
-                    mobileOpen ? "translate-x-0" : "-translate-x-full"
-                }`}
+                className={`md:hidden fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] flex flex-col bg-slate-900 border-r border-slate-800 transition-transform duration-300 ease-in-out ${mobileOpen ? "translate-x-0" : "-translate-x-full"
+                    }`}
             >
-                {/* Drawer header */}
                 <div className="h-14 flex items-center justify-between px-4 border-b border-slate-800 shrink-0">
                     <Link href="/dashboard" onClick={() => setMobileOpen(false)} aria-label="CareerTrack home">
                         <Image
@@ -229,7 +216,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                     </button>
                 </div>
 
-                {/* Drawer user */}
+
                 <div className="flex items-center gap-3 px-4 py-4 border-b border-slate-800 shrink-0">
                     <UserAvatar user={user} size={40} />
                     <div className="min-w-0">
@@ -240,7 +227,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
 
                 <NavLinks pathname={pathname} collapsed={false} onNavigate={() => setMobileOpen(false)} />
 
-                {/* Drawer footer */}
+
                 <div className="p-3 border-t border-slate-800 shrink-0 bg-slate-950/40">
                     <form action={signOut}>
                         <button
@@ -254,15 +241,12 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                 </div>
             </aside>
 
-            {/* ════════════════════════════════════════
-                DESKTOP — sticky collapsible sidebar
-            ════════════════════════════════════════ */}
+
             <aside
-                className={`hidden md:flex flex-col shrink-0 sticky top-0 h-screen bg-slate-900 border-r border-slate-800 text-slate-300 transition-[width] duration-300 ease-in-out overflow-hidden ${
-                    collapsed ? "w-[4.5rem]" : "w-64"
-                }`}
+                className={`hidden md:flex flex-col shrink-0 sticky top-0 h-screen bg-slate-900 border-r border-slate-800 text-slate-300 transition-[width] duration-300 ease-in-out overflow-hidden ${collapsed ? "w-18" : "w-64"
+                    }`}
             >
-                {/* Logo + collapse toggle */}
+
                 <div className="h-20 flex items-center justify-center px-4 border-b border-slate-800/80 shrink-0 relative">
                     {collapsed ? (
                         <button
@@ -300,7 +284,6 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                     )}
                 </div>
 
-                {/* User info */}
                 <div className={`flex items-center gap-3 py-4 border-b border-slate-800/80 shrink-0 ${collapsed ? "justify-center px-2" : "px-4"}`}>
                     <UserAvatar user={user} size={36} />
                     {!collapsed && (
@@ -311,17 +294,16 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                     )}
                 </div>
 
-                <NavLinks pathname={pathname} collapsed={collapsed} onNavigate={() => {}} />
+                <NavLinks pathname={pathname} collapsed={collapsed} onNavigate={() => { }} />
 
-                {/* Sign out */}
+
                 <div className="p-3 border-t border-slate-800/80 shrink-0 bg-slate-950/40">
                     <form action={signOut}>
                         <button
                             type="submit"
                             title={collapsed ? "Sign out" : undefined}
-                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 ${
-                                collapsed ? "justify-center" : ""
-                            }`}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 ${collapsed ? "justify-center" : ""
+                                }`}
                         >
                             <LogOut className="w-4 h-4 shrink-0" />
                             {!collapsed && <span>Sign out</span>}

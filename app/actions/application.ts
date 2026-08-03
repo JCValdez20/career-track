@@ -102,9 +102,27 @@ export async function updateApplication(
     return { error: null };
 }
 
-export async function deleteApplication(id: string): Promise<ActionState> {
+
+export async function updateApplicationStatus(
+    id: string,
+    newStatus: string
+): Promise<ActionState> {
     const supabase = await createClient();
 
+    const { error } = await supabase
+        .from("applications")
+        .update({ status: newStatus })
+        .eq("id", id);
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/dashboard/kanban");
+    revalidatePath("/dashboard/applications");
+    return { error: null };
+}
+
+export async function deleteApplication(id: string): Promise<ActionState> {
+    const supabase = await createClient();
 
     const { data: interviews } = await supabase
         .from("interviews")
@@ -124,6 +142,7 @@ export async function deleteApplication(id: string): Promise<ActionState> {
     if (interviewIds.length > 0) {
         await supabase.from("notes").delete().in("interview_id", interviewIds);
     }
+
     await supabase.from("notes").delete().eq("application_id", id);
     await supabase.from("attachments").delete().eq("application_id", id);
     await supabase.from("interviews").delete().eq("application_id", id);
@@ -133,5 +152,6 @@ export async function deleteApplication(id: string): Promise<ActionState> {
     if (error) return { error: error.message };
 
     revalidatePath("/dashboard/applications");
+    revalidatePath("/dashboard/kanban"); // Ensure kanban updates on delete too
     return { error: null };
 }
