@@ -1,25 +1,48 @@
-import { LogOut } from "lucide-react";
-import { signOut } from "@/app/actions/auth";
+import { createClient } from "@/lib/supabase/server";
+import DashboardClient from "@/components/dashboard/DashboardClient";
+import type { Application, InterviewWithApplication } from "@/types/application";
 
-export default function Dashboard() {
+export default async function DashboardPage() {
+    const supabase = await createClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+
+    const { data: applications } = await supabase
+        .from("applications")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("updated_at", { ascending: false });
+
+
+    const now = new Date().toISOString();
+    const { data: interviews } = await supabase
+        .from("interviews")
+        .select(`
+            *,
+            applications!inner(id, company, position, user_id)
+        `)
+        .eq("applications.user_id", user!.id)
+        .gte("scheduled_at", now)
+        .order("scheduled_at", { ascending: true })
+        .limit(3);
+
     return (
-        <div className="min-h-screen bg-slate-50">
-            <header className="border-b border-slate-200 bg-white px-6 py-4 flex items-center justify-between">
-                <h1 className="text-lg font-semibold text-slate-900">Dashboard</h1>
-                <form action={signOut}>
-                    <button
-                        type="submit"
-                        className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-red-600 hover:border-red-200 active:scale-[0.98]"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Sign out
-                    </button>
-                </form>
-            </header>
+        <div className="mx-auto flex w-full min-w-0 max-w-380 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+            <div className="flex flex-col gap-1 shrink-0">
+                <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                    Dashboard
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                    Your job hunt command center.
+                </p>
+            </div>
 
-            <main className="p-6">
-                <p className="text-slate-500 text-sm">Welcome to your dashboard.</p>
-            </main>
+            <DashboardClient
+                applications={(applications as Application[]) || []}
+                upcomingInterviews={(interviews as unknown as InterviewWithApplication[]) || []}
+            />
         </div>
     );
 }

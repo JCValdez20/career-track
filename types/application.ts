@@ -52,3 +52,26 @@ export interface Attachment {
 
     signedUrl?: string;
 }
+
+export type InterviewType = "phone" | "technical" | "onsite" | "final" | "other";
+export type InterviewOutcome = "pending" | "passed" | "failed" | "cancelled";
+
+export interface Interview {
+    id: string;
+    application_id: string;
+    type: InterviewType;
+    scheduled_at: string;
+    duration_minutes: number | null;
+    location: string | null;
+    interviewer: string | null;
+    outcome: InterviewOutcome | null;
+    notes: string | null;
+    created_at: string;
+}
+
+export interface InterviewWithApplication extends Interview {
+    applications: { id: string; company: string; position: string } | null;
+    // Aliased from the `notes` table in the query (see interview.ts) to
+    // avoid colliding with the interview's own `notes` text column above.
+    interview_notes: Note[];
+}
