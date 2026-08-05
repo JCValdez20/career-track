@@ -10,19 +10,19 @@ interface RevealProps {
     children: React.ReactNode;
     className?: string;
     variant?: RevealVariant;
-    delay?: number; // ms
-    duration?: number; // ms
+    delay?: number;
+    duration?: number;
     threshold?: number;
     once?: boolean;
     as?: string;
 }
 
 const INITIAL: Record<RevealVariant, string> = {
-    "fade-up":    "opacity-0 translate-y-8",
-    "fade-in":    "opacity-0",
-    "fade-left":  "opacity-0 -translate-x-8",
+    "fade-up": "opacity-0 translate-y-8",
+    "fade-in": "opacity-0",
+    "fade-left": "opacity-0 -translate-x-8",
     "fade-right": "opacity-0 translate-x-8",
-    "zoom-in":    "opacity-0 scale-95",
+    "zoom-in": "opacity-0 scale-95",
 };
 
 const VISIBLE = "opacity-100 translate-y-0 translate-x-0 scale-100";

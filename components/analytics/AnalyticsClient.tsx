@@ -14,14 +14,14 @@ interface AnalyticsClientProps {
 }
 
 const STATUS_COLORS = {
-    applied: "#6366f1",    // Indigo
-    screening: "#0ea5e9",  // Sky
-    interview: "#8b5cf6",  // Violet
-    test: "#f59e0b",       // Amber
-    offer: "#10b981",      // Emerald
-    hired: "#22c55e",      // Green
-    rejected: "#f43f5e",   // Rose
-    withdrawn: "#64748b",  // Slate
+    applied: "#6366f1",
+    screening: "#0ea5e9",
+    interview: "#8b5cf6",
+    test: "#f59e0b",
+    offer: "#10b981",
+    hired: "#22c55e",
+    rejected: "#f43f5e",
+    withdrawn: "#64748b",
 };
 
 export default function AnalyticsClient({ applications }: AnalyticsClientProps) {
@@ -81,7 +81,6 @@ export default function AnalyticsClient({ applications }: AnalyticsClientProps) 
     if (!isMounted) return null;
 
     return (
-
         <div className="flex flex-col gap-4 pb-8 lg:flex-1 lg:min-h-0 lg:pb-2">
 
 
@@ -138,6 +137,8 @@ export default function AnalyticsClient({ applications }: AnalyticsClientProps) 
 
 
             <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-4 lg:flex-1 lg:min-h-0">
+
+
                 <div className="col-span-1 lg:row-span-1 rounded-2xl border border-border/50 bg-card/30 p-4 flex flex-col shadow-sm min-h-70 lg:min-h-0">
                     <div className="flex items-center gap-2 mb-2 shrink-0">
                         <div className="p-1 rounded-md bg-sky-500/10 text-sky-400"><BarChart3 size={16} /></div>
@@ -155,7 +156,8 @@ export default function AnalyticsClient({ applications }: AnalyticsClientProps) 
                                     cursor={false}
                                     contentStyle={{ backgroundColor: "hsl(var(--card))", borderColor: "hsl(var(--border))", borderRadius: "12px", fontSize: "12px", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
                                 />
-                                <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={24} activeBar={{ filter: 'brightness(1.2)' }}>
+
+                                <Bar dataKey="value" name="Applications" radius={[0, 6, 6, 0]} barSize={24} activeBar={{ filter: 'brightness(1.2)' }}>
                                     {funnelData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.fill} className="hover:opacity-90 transition-opacity duration-300" />
                                     ))}
@@ -164,6 +166,7 @@ export default function AnalyticsClient({ applications }: AnalyticsClientProps) 
                         </ResponsiveContainer>
                     </div>
                 </div>
+
 
                 <div className="col-span-1 lg:row-span-1 rounded-2xl border border-border/50 bg-card/30 p-4 flex flex-col shadow-sm min-h-70 lg:min-h-0">
                     <div className="flex items-center gap-2 mb-2 shrink-0">
@@ -185,10 +188,11 @@ export default function AnalyticsClient({ applications }: AnalyticsClientProps) 
                                         data={statusData}
                                         cx="50%"
                                         cy="50%"
-                                        innerRadius={70} /* FIX: Changed percentage to fixed px to prevent overlapping on small screens */
+                                        innerRadius={70}
                                         outerRadius={95}
                                         paddingAngle={4}
                                         dataKey="value"
+                                        nameKey="name"
                                         stroke="none"
                                         cornerRadius={4}
                                     >
@@ -212,6 +216,7 @@ export default function AnalyticsClient({ applications }: AnalyticsClientProps) 
                         )}
                     </div>
                 </div>
+
 
                 <div className="col-span-1 lg:col-span-2 lg:row-span-1 rounded-2xl border border-border/50 bg-card/30 p-4 flex flex-col shadow-sm min-h-70 lg:min-h-0">
                     <div className="flex items-center gap-2 mb-2 shrink-0">
@@ -252,9 +257,11 @@ export default function AnalyticsClient({ applications }: AnalyticsClientProps) 
                                         contentStyle={{ backgroundColor: "hsl(var(--card))", borderColor: "hsl(var(--border))", borderRadius: "12px", fontSize: "12px", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
                                         cursor={{ stroke: 'hsl(var(--indigo-500) / 0.2)', strokeWidth: 2, strokeDasharray: '4 4' }}
                                     />
+
                                     <Area
                                         type="monotone"
                                         dataKey="applications"
+                                        name="Applications"
                                         stroke="#6366f1"
                                         strokeWidth={3}
                                         fillOpacity={1}

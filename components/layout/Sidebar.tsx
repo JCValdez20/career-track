@@ -70,7 +70,7 @@ function NavLinks({
     onNavigate: () => void;
 }) {
     return (
-        <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1.5">
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden py-6 px-3 space-y-1.5">
             {!collapsed && (
                 <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-4 px-3">
                     Menu
@@ -98,11 +98,6 @@ function NavLinks({
                             {!collapsed && <span className="truncate">{item.name}</span>}
                         </Link>
 
-                        {collapsed && (
-                            <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-lg bg-slate-800 border border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-200 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                                {item.name}
-                            </span>
-                        )}
                     </div>
                 );
             })}
@@ -116,7 +111,6 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
     const [mounted, setMounted] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
 
-    // Restore persisted collapse state
     useEffect(() => {
         try {
             const saved = localStorage.getItem("ct-sidebar-collapsed");

@@ -107,8 +107,6 @@ export default function Navbar() {
 
             <div
                 className={cn(
-                    // Removed the duplicate background color from this container 
-                    // so it seamlessly inherits the main header's frosted glass blur.
                     "grid transition-[grid-template-rows] duration-300 ease-out md:hidden",
                     open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                 )}

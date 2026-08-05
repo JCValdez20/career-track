@@ -16,7 +16,6 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState<"month" | "week">("month");
 
-    // Modal States
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [isAddOpen, setIsAddOpen] = useState(false);
 
@@ -31,7 +30,6 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
         setIsMounted(true);
     }, []);
 
-    // --- Native Date Math for Grid Generation ---
     const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
 
     const calendarDays = useMemo(() => {
@@ -68,7 +66,6 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
         return days;
     }, [currentDate, viewMode]);
 
-    // --- Navigation Controls ---
     const nextPeriod = () => {
         setCurrentDate(prev => {
             const next = new Date(prev);
@@ -89,8 +86,16 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
 
     const jumpToToday = () => setCurrentDate(new Date());
 
-    // --- Action Handlers ---
+
     async function handleCreate(formData: FormData) {
+        const date = formData.get("scheduledDate");
+        const time = formData.get("scheduledTime");
+
+        if (date && time) {
+            const localDateTime = new Date(`${date}T${time}`);
+            formData.set("scheduledAtIso", localDateTime.toISOString());
+        }
+
         const res = await createInterview({ error: null }, formData);
         if (res.error) alert(res.error);
         else setIsAddOpen(false);
@@ -165,7 +170,7 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
                     });
 
                     return (
-                        <div key={idx} onClick={() => { setSelectedDate(dayItem.date); setIsAddOpen(true); }} className={`min-h-[80px] sm:min-h-[120px] bg-card p-1 sm:p-2 transition-colors hover:bg-muted/30 cursor-pointer flex flex-col gap-1 sm:gap-1.5 ${!dayItem.isCurrentMonth ? "opacity-40" : ""}`}>
+                        <div key={idx} onClick={() => { setSelectedDate(dayItem.date); setIsAddOpen(true); }} className={`min-h-20 sm:min-h-30 bg-card p-1 sm:p-2 transition-colors hover:bg-muted/30 cursor-pointer flex flex-col gap-1 sm:gap-1.5 ${!dayItem.isCurrentMonth ? "opacity-40" : ""}`}>
                             <span className={`text-[10px] sm:text-xs font-semibold ml-0.5 sm:ml-1 mt-0.5 sm:mt-1 w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full ${isToday(dayItem.date) ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/30" : "text-foreground"}`}>
                                 {dayItem.date.getDate()}
                             </span>
@@ -196,8 +201,8 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
                     <div className="w-full max-w-md rounded-2xl border border-border/60 bg-card p-4 sm:p-6 shadow-xl relative animate-in fade-in zoom-in-95 duration-200">
                         <button onClick={() => setIsAddOpen(false)} className="absolute right-4 top-4 p-1 rounded-md text-muted-foreground hover:bg-muted transition-colors"><X size={18} /></button>
                         <h3 className="text-lg font-bold mb-4">Schedule Interview</h3>
+
                         <form action={handleCreate} className="flex flex-col gap-4">
-                            <input type="hidden" name="scheduledAtIso" value={new Date(selectedDate.setHours(9, 0, 0)).toISOString().slice(0, 16)} />
                             <div className="space-y-1">
                                 <label className="text-xs font-semibold text-muted-foreground">Application</label>
                                 <select name="applicationId" required className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:ring-2 focus-visible:ring-indigo-500">
@@ -207,6 +212,34 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
                                     ))}
                                 </select>
                             </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-semibold text-muted-foreground">Date</label>
+                                    <input
+                                        type="date"
+                                        name="scheduledDate"
+                                        required
+                                        defaultValue={
+                                            selectedDate
+                                                ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
+                                                : ""
+                                        }
+                                        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:ring-2 focus-visible:ring-indigo-500"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-xs font-semibold text-muted-foreground">Time</label>
+                                    <input
+                                        type="time"
+                                        name="scheduledTime"
+                                        required
+                                        defaultValue="09:00"
+                                        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:ring-2 focus-visible:ring-indigo-500"
+                                    />
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-muted-foreground">Round Type</label>
@@ -223,6 +256,7 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
                                     <input type="number" name="durationMinutes" defaultValue={60} className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:ring-2 focus-visible:ring-indigo-500" />
                                 </div>
                             </div>
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-muted-foreground">Location / Link</label>
@@ -233,6 +267,7 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
                                     <input type="text" name="interviewer" placeholder="e.g. Jane Doe" className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:ring-2 focus-visible:ring-indigo-500" />
                                 </div>
                             </div>
+
                             <div className="mt-2 flex gap-3">
                                 <button type="button" onClick={() => setIsAddOpen(false)} className="flex-1 rounded-xl px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted transition-colors">Cancel</button>
                                 <button type="submit" className="flex-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shadow-md">Schedule</button>
@@ -242,7 +277,7 @@ export default function CalendarClient({ applications, interviews }: CalendarCli
                 </div>
             )}
 
-            {/* --- EVENT DETAIL MODAL --- */}
+
             {isDetailOpen && selectedEvent && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="w-full max-w-lg rounded-2xl border border-border/60 bg-card shadow-2xl relative flex flex-col max-h-[85vh] overflow-hidden">

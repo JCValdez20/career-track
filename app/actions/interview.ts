@@ -55,9 +55,6 @@ export async function createInterview(
     return { error: null };
 }
 
-// Not wired into the UI yet — Calendar's spec only calls for viewing
-// and deleting from the detail dialog — but kept here since rescheduling
-// is a near-certain next request and the parsing logic is identical.
 export async function updateInterview(
     id: string,
     _prevState: ActionState,
@@ -89,9 +86,7 @@ export async function updateInterview(
 export async function deleteInterview(id: string): Promise<ActionState> {
     const supabase = await createClient();
 
-    // Same reasoning as deleteApplication — clean up dependent notes
-    // explicitly rather than relying on a cascade the schema export
-    // doesn't confirm exists.
+
     await supabase.from("notes").delete().eq("interview_id", id);
 
     const { error } = await supabase.from("interviews").delete().eq("id", id);
@@ -112,7 +107,6 @@ export async function addInterviewNote(
 
     const supabase = await createClient();
 
-    // Send ONLY the interview_id
     const { error } = await supabase.from("notes").insert({
         interview_id: interviewId,
         content,

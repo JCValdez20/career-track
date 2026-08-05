@@ -58,7 +58,6 @@ export default function HowItWorks() {
 
             <div className="mx-auto max-w-6xl px-6">
 
-                {/* Section header */}
                 <Reveal variant="fade-up" delay={0} duration={600}>
                     <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
@@ -81,7 +80,6 @@ export default function HowItWorks() {
                     </div>
                 </Reveal>
 
-                {/* Steps */}
                 <div className="relative mx-auto mt-20 max-w-2xl">
 
                     <div className="absolute left-6.75 sm:left-8.75 top-6 bottom-6 w-px bg-linear-to-b from-blue-500/50 via-orange-500/50 to-emerald-500/50" />

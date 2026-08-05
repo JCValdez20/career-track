@@ -82,30 +82,28 @@ export default function ApplicationsTable({ applications }: { applications: Appl
                             tabIndex={0}
                             onClick={() => openDetail(app.id)}
                             onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && openDetail(app.id)}
-                            className="group flex w-full cursor-pointer items-start gap-2.5 px-3 py-3.5 text-left transition-colors hover:bg-white/[0.035] sm:gap-3 sm:px-4 sm:py-4"
+                            className="group flex w-full cursor-pointer items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-white/[0.035]"
                         >
                             <div
-                                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-linear-to-br text-xs font-bold text-white shadow-sm sm:h-10 sm:w-10 ${avatarGradient(app.company)}`}
+                                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br text-xs font-bold text-white shadow-sm ${avatarGradient(app.company)}`}
                             >
                                 {getInitials(app.company)}
                             </div>
 
-                            {/* AGGRESSIVE OVERFLOW CONTROL: Forced flex-1, min-w-0, and overflow-hidden */}
                             <div className="min-w-0 flex-1 overflow-hidden">
-                                <div className="flex w-full items-start justify-between gap-2">
-                                    <div className="min-w-0 flex-1 overflow-hidden">
-                                        <p className="truncate font-semibold text-foreground">
-                                            {app.company}
-                                        </p>
-                                        <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                                            {app.position}
-                                        </p>
-                                    </div>
-                                    <div className="shrink-0">
-                                        <StatusBadge status={app.status} />
-                                    </div>
+                                <p className="truncate font-semibold text-foreground">
+                                    {app.company}
+                                </p>
+
+                                <p className="mt-0.5 truncate text-sm text-muted-foreground">
+                                    {app.position}
+                                </p>
+
+                                <div className="mt-2.5 mb-2 flex items-center">
+                                    <StatusBadge status={app.status} />
                                 </div>
-                                <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground/60">
+
+                                <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground/60">
                                     <span className="shrink-0" title={new Date(app.applied_date).toLocaleDateString("en-US")}>
                                         {relativeTime(app.applied_date)}
                                     </span>

@@ -38,7 +38,7 @@ export default function ProblemSection() {
 
             <div className="mx-auto max-w-6xl px-6">
 
-                {/* Header */}
+
                 <Reveal variant="fade-up" delay={0} duration={600}>
                     <div className="max-w-xl">
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
@@ -59,7 +59,6 @@ export default function ProblemSection() {
                     </div>
                 </Reveal>
 
-                {/* Problem cards grid */}
                 <div className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-2 shadow-2xl">
                     {PROBLEMS.map(({ icon: Icon, title, description }, index) => (
                         <Reveal

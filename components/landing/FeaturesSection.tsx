@@ -7,13 +7,11 @@ export default function FeaturesSection() {
     return (
         <section id="features" className="relative border-t border-white/10 py-24 sm:py-32 overflow-hidden">
 
-            {/* Background Spotlights */}
             <div className="absolute top-1/4 left-0 -translate-x-1/2 h-120 w-120 -z-10 bg-blue-500/10 blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 h-100 w-100 -z-10 bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none" />
 
             <div className="mx-auto max-w-6xl px-6">
 
-                {/* Header */}
                 <Reveal variant="fade-up" delay={0} duration={600}>
                     <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
@@ -39,7 +37,6 @@ export default function FeaturesSection() {
 
                 <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                    {/* Kanban – wide card */}
                     <Reveal variant="fade-up" delay={0} duration={650} threshold={0.1} className="md:col-span-2">
                         <div className="group relative flex flex-col h-full overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 transition-colors hover:bg-white/[0.07]">
                             <div>
@@ -82,7 +79,6 @@ export default function FeaturesSection() {
                         </div>
                     </Reveal>
 
-                    {/* Calendar */}
                     <Reveal variant="fade-up" delay={120} duration={650} threshold={0.1}>
                         <div className="group relative flex flex-col h-full overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 transition-colors hover:bg-white/[0.07]">
                             <div>
@@ -123,7 +119,6 @@ export default function FeaturesSection() {
                         </div>
                     </Reveal>
 
-                    {/* Analytics */}
                     <Reveal variant="fade-up" delay={0} duration={650} threshold={0.1}>
                         <div className="group relative flex flex-col h-full overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 transition-colors hover:bg-white/[0.07]">
                             <div>
@@ -150,7 +145,6 @@ export default function FeaturesSection() {
                         </div>
                     </Reveal>
 
-                    {/* Notes & Documents – wide card */}
                     <Reveal variant="fade-up" delay={120} duration={650} threshold={0.1} className="md:col-span-2">
                         <div className="group relative flex flex-col h-full overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 transition-colors hover:bg-white/[0.07]">
                             <div>

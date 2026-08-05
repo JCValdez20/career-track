@@ -6,12 +6,10 @@ import { Button } from "@/components/ui/Button";
 import { uploadAttachment, deleteAttachment } from "@/app/actions/attachments";
 import type { Attachment } from "@/types/application";
 
-// ── Constants ────────────────────────────────────────────────────────────────
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB (must match server action)
 const MAX_FILE_LABEL = "10 MB";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function formatSize(bytes: number | null) {
     if (!bytes) return "";
@@ -30,14 +28,13 @@ function getFileIcon(filename: string) {
 }
 
 const FILE_BADGE_CLASSES: Record<string, string> = {
-    PDF:  "bg-rose-500/10 text-rose-400",
-    DOC:  "bg-sky-500/10 text-sky-400",
-    IMG:  "bg-violet-500/10 text-violet-400",
-    XLS:  "bg-emerald-500/10 text-emerald-400",
+    PDF: "bg-rose-500/10 text-rose-400",
+    DOC: "bg-sky-500/10 text-sky-400",
+    IMG: "bg-violet-500/10 text-violet-400",
+    XLS: "bg-emerald-500/10 text-emerald-400",
     FILE: "bg-muted text-muted-foreground",
 };
 
-// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function FilesTab({
     applicationId,
@@ -56,7 +53,6 @@ export default function FilesTab({
     const formRef = useRef<HTMLFormElement>(null);
     const wasPending = useRef(false);
 
-    // Reset form after a successful upload
     useEffect(() => {
         if (wasPending.current && !pending && !serverState.error) {
             formRef.current?.reset();
@@ -65,10 +61,10 @@ export default function FilesTab({
             setClientError(null);
         }
         wasPending.current = pending;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [pending, serverState.error]);
 
-    // Client-side file picker handler — validates size immediately
+
     function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
         if (!file) {
@@ -83,7 +79,6 @@ export default function FilesTab({
             );
             setFileName(null);
             setFileSize(null);
-            // Clear the input so the user can pick a different file
             e.target.value = "";
             return;
         }
@@ -92,38 +87,35 @@ export default function FilesTab({
         setFileSize(file.size);
     }
 
-    // Unified error: client-side errors take priority over server errors
     const displayError = clientError ?? serverState.error;
-    // Disable the submit button if there's a client error or no file picked
+
     const canSubmit = !clientError && !!fileName;
 
     return (
         <div className="flex flex-col gap-5">
 
-            {/* ── Upload zone ── */}
+
             <form ref={formRef} action={formAction} className="flex flex-col gap-2.5">
                 <label
-                    className={`flex cursor-pointer flex-col items-center gap-3 rounded-xl border-2 border-dashed px-4 py-8 text-center transition-all ${
-                        clientError
+                    className={`flex cursor-pointer flex-col items-center gap-3 rounded-xl border-2 border-dashed px-4 py-8 text-center transition-all ${clientError
                             ? "border-destructive/40 bg-destructive/5"
                             : isDragging
-                            ? "border-indigo-500/60 bg-indigo-500/5"
-                            : fileName
-                            ? "border-emerald-500/40 bg-emerald-500/5"
-                            : "border-border/50 bg-card/20 hover:border-border hover:bg-card/40"
-                    }`}
+                                ? "border-indigo-500/60 bg-indigo-500/5"
+                                : fileName
+                                    ? "border-emerald-500/40 bg-emerald-500/5"
+                                    : "border-border/50 bg-card/20 hover:border-border hover:bg-card/40"
+                        }`}
                     onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                     onDragLeave={() => setIsDragging(false)}
                     onDrop={() => setIsDragging(false)}
                 >
-                    {/* Icon */}
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
-                        clientError
+
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${clientError
                             ? "bg-destructive/10"
                             : fileName
-                            ? "bg-emerald-500/10"
-                            : "bg-muted/50"
-                    }`}>
+                                ? "bg-emerald-500/10"
+                                : "bg-muted/50"
+                        }`}>
                         {clientError ? (
                             <AlertCircle className="h-5 w-5 text-destructive" />
                         ) : (
@@ -131,7 +123,7 @@ export default function FilesTab({
                         )}
                     </div>
 
-                    {/* Label text */}
+
                     <div>
                         <p className="text-sm font-medium text-foreground">
                             {fileName ?? "Drop files here or click to browse"}
@@ -152,7 +144,7 @@ export default function FilesTab({
                     />
                 </label>
 
-                {/* Error banner — shown for both client-side and server-side errors */}
+
                 {displayError && (
                     <div className="flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/5 px-3.5 py-3">
                         <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
@@ -183,7 +175,7 @@ export default function FilesTab({
                 </Button>
             </form>
 
-            {/* ── File list ── */}
+
             {attachments.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/40 py-10 text-center">
                     <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-border/50 bg-muted/30">
@@ -204,7 +196,7 @@ export default function FilesTab({
                                 className="group flex items-center justify-between gap-3 rounded-xl border border-border/50 bg-card/40 p-3 transition-colors hover:border-border/70"
                             >
                                 <div className="flex min-w-0 items-center gap-3">
-                                    {/* File type badge */}
+
                                     <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold ${FILE_BADGE_CLASSES[badge]}`}>
                                         {badge}
                                     </div>

@@ -7,25 +7,25 @@ import type { Application } from "@/types/application";
 import { Briefcase, Link2, MapPin, DollarSign, Rss, CalendarDays, CheckCircle2 } from "lucide-react";
 
 const STATUSES = [
-    { value: "applied",   label: "Applied",   color: "indigo" },
+    { value: "applied", label: "Applied", color: "indigo" },
     { value: "screening", label: "Screening", color: "sky" },
     { value: "interview", label: "Interview", color: "violet" },
-    { value: "test",      label: "Test",      color: "amber" },
-    { value: "offer",     label: "Offer",     color: "emerald" },
-    { value: "hired",     label: "Hired",     color: "green" },
-    { value: "rejected",  label: "Rejected",  color: "rose" },
+    { value: "test", label: "Test", color: "amber" },
+    { value: "offer", label: "Offer", color: "emerald" },
+    { value: "hired", label: "Hired", color: "green" },
+    { value: "rejected", label: "Rejected", color: "rose" },
     { value: "withdrawn", label: "Withdrawn", color: "slate" },
 ] as const;
 
 const STATUS_ACTIVE_CLASSES: Record<string, string> = {
-    indigo:  "bg-indigo-500/20 text-indigo-400 ring-indigo-500/40",
-    sky:     "bg-sky-500/20 text-sky-400 ring-sky-500/40",
-    violet:  "bg-violet-500/20 text-violet-400 ring-violet-500/40",
-    amber:   "bg-amber-500/20 text-amber-400 ring-amber-500/40",
+    indigo: "bg-indigo-500/20 text-indigo-400 ring-indigo-500/40",
+    sky: "bg-sky-500/20 text-sky-400 ring-sky-500/40",
+    violet: "bg-violet-500/20 text-violet-400 ring-violet-500/40",
+    amber: "bg-amber-500/20 text-amber-400 ring-amber-500/40",
     emerald: "bg-emerald-500/20 text-emerald-400 ring-emerald-500/40",
-    green:   "bg-green-500/20 text-green-400 ring-green-500/40",
-    rose:    "bg-rose-500/20 text-rose-400 ring-rose-500/40",
-    slate:   "bg-slate-500/20 text-slate-400 ring-slate-500/40",
+    green: "bg-green-500/20 text-green-400 ring-green-500/40",
+    rose: "bg-rose-500/20 text-rose-400 ring-rose-500/40",
+    slate: "bg-slate-500/20 text-slate-400 ring-slate-500/40",
 };
 
 export default function DetailsTab({ application }: { application: Application }) {
@@ -42,13 +42,13 @@ export default function DetailsTab({ application }: { application: Application }
             return () => clearTimeout(t);
         }
         wasPending.current = pending;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [pending, state.error]);
 
     return (
         <form action={formAction} className="grid gap-4">
 
-            {/* Company + Position */}
+
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field
                     label="Company"
@@ -65,7 +65,6 @@ export default function DetailsTab({ application }: { application: Application }
                 />
             </div>
 
-            {/* Status picker */}
             <div>
                 <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
                     Status
@@ -79,11 +78,10 @@ export default function DetailsTab({ application }: { application: Application }
                                 key={s.value}
                                 type="button"
                                 onClick={() => setSelectedStatus(s.value)}
-                                className={`rounded-full px-3 py-1 text-xs font-medium ring-1 transition-all ${
-                                    isActive
+                                className={`rounded-full px-3 py-1 text-xs font-medium ring-1 transition-all ${isActive
                                         ? STATUS_ACTIVE_CLASSES[s.color]
                                         : "text-muted-foreground ring-border/50 hover:text-foreground hover:ring-border"
-                                }`}
+                                    }`}
                             >
                                 {s.label}
                             </button>
@@ -92,7 +90,6 @@ export default function DetailsTab({ application }: { application: Application }
                 </div>
             </div>
 
-            {/* Date + URL */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field
                     label="Applied date"
@@ -111,7 +108,6 @@ export default function DetailsTab({ application }: { application: Application }
                 />
             </div>
 
-            {/* Location + Salary */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field
                     label="Location"
@@ -128,7 +124,6 @@ export default function DetailsTab({ application }: { application: Application }
                 />
             </div>
 
-            {/* Source */}
             <Field
                 label="Source"
                 name="source"
@@ -136,7 +131,6 @@ export default function DetailsTab({ application }: { application: Application }
                 icon={<Rss className="h-3.5 w-3.5" />}
             />
 
-            {/* Error */}
             {state.error && (
                 <div className="flex items-start gap-2.5 rounded-xl border border-destructive/20 bg-destructive/10 px-3.5 py-3 text-sm text-destructive">
                     <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-destructive" />
@@ -144,7 +138,6 @@ export default function DetailsTab({ application }: { application: Application }
                 </div>
             )}
 
-            {/* Actions */}
             <div className="flex items-center gap-3">
                 <Button
                     type="submit"
@@ -173,7 +166,7 @@ export default function DetailsTab({ application }: { application: Application }
     );
 }
 
-// ── Field ─────────────────────────────────────────────────────────────────────
+
 
 function Field({
     label,

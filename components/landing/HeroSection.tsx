@@ -25,7 +25,7 @@ export default function HeroSection() {
             <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 px-6 lg:grid-cols-2 lg:gap-12">
 
                 <div>
-                    {/* Badge */}
+
                     <Reveal variant="fade-up" delay={0} duration={600}>
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
                             <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
@@ -35,7 +35,7 @@ export default function HeroSection() {
                         </div>
                     </Reveal>
 
-                    {/* Headline */}
+
                     <Reveal variant="fade-up" delay={80} duration={650}>
                         <h1 className="mt-6 font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.25rem]">
                             <span className="bg-linear-to-b from-white to-white/60 bg-clip-text text-transparent">
@@ -48,7 +48,6 @@ export default function HeroSection() {
                         </h1>
                     </Reveal>
 
-                    {/* Subtext */}
                     <Reveal variant="fade-up" delay={160} duration={650}>
                         <p className="mt-5 max-w-md text-base leading-relaxed text-foreground/60 sm:text-lg">
                             CareerTrack keeps every application, interview, and offer in one
@@ -57,7 +56,6 @@ export default function HeroSection() {
                         </p>
                     </Reveal>
 
-                    {/* CTA Buttons */}
                     <Reveal variant="fade-up" delay={240} duration={650}>
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                             <Button
@@ -80,7 +78,6 @@ export default function HeroSection() {
                         </div>
                     </Reveal>
 
-                    {/* Fine print */}
                     <Reveal variant="fade-up" delay={320} duration={650}>
                         <p className="mt-5 text-[11px] uppercase tracking-[0.08em] text-foreground/50">
                             Free forever · No credit card · Takes 2 minutes
@@ -88,7 +85,6 @@ export default function HeroSection() {
                     </Reveal>
                 </div>
 
-                {/* Hero image + floating card */}
                 <Reveal variant="fade-left" delay={200} duration={800} threshold={0.05}>
                     <div className="relative mx-auto w-full max-w-md lg:max-w-none">
 
@@ -103,7 +99,6 @@ export default function HeroSection() {
                             />
                         </div>
 
-                        {/* Floating status card */}
                         <Reveal variant="zoom-in" delay={500} duration={500} threshold={0.05}>
                             <div className="absolute -bottom-6 -left-6 w-64 rounded-xl border border-white/10 bg-black/60 p-4 shadow-2xl backdrop-blur-md sm:-left-10">
                                 <div className="flex items-center justify-between gap-2">

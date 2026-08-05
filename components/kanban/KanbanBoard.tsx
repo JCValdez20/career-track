@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { updateApplicationStatus } from "@/app/actions/application";
-import { MapPin, Calendar, FileText, ArrowRight } from "lucide-react"; // Swapped icon here
+import { MapPin, Calendar, FileText, ArrowRight, CheckCircle2, XCircle, ArchiveX } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,19 +12,27 @@ import {
     DropdownMenuTrigger,
     DropdownMenuSeparator,
     DropdownMenuLabel,
-    DropdownMenuGroup
+    DropdownMenuGroup,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuPortal,
+    DropdownMenuSubContent
 } from "@/components/ui/dropdown-menu";
 import type { Application } from "@/types/application";
 
-const COLUMNS = [
+
+const BOARD_COLUMNS = [
     { key: "applied", label: "Applied", color: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" },
     { key: "screening", label: "Screening", color: "bg-sky-500/10 text-sky-400 border-sky-500/20" },
     { key: "interview", label: "Interview", color: "bg-violet-500/10 text-violet-400 border-violet-500/20" },
     { key: "test", label: "Test", color: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
     { key: "offer", label: "Offer", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
-    { key: "hired", label: "Hired", color: "bg-green-500/10 text-green-400 border-green-500/20" },
-    { key: "rejected", label: "Rejected", color: "bg-rose-500/10 text-rose-400 border-rose-500/20" },
-    { key: "withdrawn", label: "Withdrawn", color: "bg-slate-500/10 text-slate-400 border-slate-500/20" },
+] as const;
+
+const TERMINAL_STATES = [
+    { key: "hired", label: "Hired", icon: CheckCircle2, color: "text-green-500" },
+    { key: "rejected", label: "Rejected", icon: XCircle, color: "text-rose-500" },
+    { key: "withdrawn", label: "Withdrawn", icon: ArchiveX, color: "text-slate-500" },
 ] as const;
 
 interface KanbanBoardProps {
@@ -49,27 +57,20 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
 
         const originalWarn = console.warn;
         console.warn = (...args) => {
-            if (
-                typeof args[0] === "string" &&
-                args[0].includes("unsupported nested scroll container")
-            ) {
+            if (typeof args[0] === "string" && args[0].includes("unsupported nested scroll container")) {
                 return;
             }
             originalWarn(...args);
         };
-
-        return () => {
-            console.warn = originalWarn;
-        };
+        return () => { console.warn = originalWarn; };
     }, []);
 
     useEffect(() => {
-        const grouped: BoardState = {
-            applied: [], screening: [], interview: [], test: [],
-            offer: [], hired: [], rejected: [], withdrawn: []
-        };
+
+        const grouped: BoardState = { applied: [], screening: [], interview: [], test: [], offer: [] };
 
         applications.forEach((app) => {
+
             if (grouped[app.status]) {
                 grouped[app.status].push(app);
             }
@@ -86,12 +87,8 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
 
     async function handleDragEnd(result: DropResult) {
         const { source, destination, draggableId } = result;
-
         if (!destination) return;
-
-        if (source.droppableId === destination.droppableId && source.index === destination.index) {
-            return;
-        }
+        if (source.droppableId === destination.droppableId && source.index === destination.index) return;
 
         const sourceColKey = source.droppableId;
         const destColKey = destination.droppableId;
@@ -101,7 +98,6 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
         const destList = sourceColKey === destColKey ? sourceList : [...newColumns[destColKey]];
 
         const [movedItem] = sourceList.splice(source.index, 1);
-
         movedItem.status = destColKey as Application["status"];
 
         destList.splice(destination.index, 0, movedItem);
@@ -111,7 +107,7 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
         setColumns(newColumns);
 
         if (sourceColKey !== destColKey) {
-            await updateApplicationStatus(draggableId, destColKey);
+            await updateApplicationStatus(draggableId, destColKey as Application["status"]);
         }
     }
 
@@ -119,13 +115,14 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
 
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="flex h-[calc(100vh-12rem)] w-full min-w-0 gap-4 overflow-x-auto pb-4 pt-2">
-                {COLUMNS.map((col) => {
+
+            <div className="flex flex-col lg:flex-row lg:h-[calc(100vh-12rem)] w-full min-w-0 gap-4 overflow-y-auto lg:overflow-x-auto lg:overflow-y-hidden pb-4 pt-2 px-1">
+                {BOARD_COLUMNS.map((col) => {
                     const columnApps = columns[col.key] || [];
 
                     return (
-                        <div key={col.key} className="flex h-full w-72 shrink-0 flex-col rounded-2xl border border-border/60 bg-card/20">
-                            <div className="flex items-center justify-between border-b border-border/40 px-4 py-3">
+                        <div key={col.key} className="flex h-100 lg:h-full w-full lg:w-72 shrink-0 flex-col rounded-2xl border border-border/60 bg-card/20">
+                            <div className="flex items-center justify-between border-b border-border/40 px-4 py-3 shrink-0">
                                 <span className={`rounded-md border px-2 py-0.5 text-xs font-semibold ${col.color}`}>
                                     {col.label}
                                 </span>
@@ -139,12 +136,11 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
                                     <div
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
-                                        className={`flex flex-1 flex-col gap-3 overflow-y-auto p-3 transition-colors ${snapshot.isDraggingOver ? "bg-white/5" : ""
-                                            }`}
+                                        className={`flex flex-1 flex-col gap-3 overflow-y-auto p-3 transition-colors ${snapshot.isDraggingOver ? "bg-white/5" : ""}`}
                                     >
                                         {columnApps.length === 0 && !snapshot.isDraggingOver && (
                                             <div className="flex h-24 items-center justify-center rounded-xl border border-dashed border-border/40 text-xs text-muted-foreground/40">
-                                                No applications
+                                                Drop applications here
                                             </div>
                                         )}
 
@@ -156,9 +152,9 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
                                                         {...provided.draggableProps}
                                                         {...provided.dragHandleProps}
                                                         onClick={() => openDetail(app.id)}
-                                                        className={`group relative rounded-xl border p-4 shadow-sm transition-colors ${snapshot.isDragging
-                                                                ? "border-ring/50 bg-card rotate-2 shadow-xl z-50 cursor-grabbing"
-                                                                : "border-border/60 bg-card/60 hover:border-ring/50 hover:bg-card/80 cursor-grab"
+                                                        className={`group relative rounded-xl border p-4 shadow-sm transition-all ${snapshot.isDragging
+                                                            ? "border-ring/50 bg-card rotate-2 shadow-xl z-50 cursor-grabbing"
+                                                            : "border-border/60 bg-card/60 hover:border-ring/50 hover:bg-card/80 cursor-grab"
                                                             }`}
                                                         style={provided.draggableProps.style}
                                                     >
@@ -169,7 +165,6 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
 
                                                             <div onClick={(e) => e.stopPropagation()} className="shrink-0 cursor-default">
                                                                 <DropdownMenu>
-                                                                    {/* Replaced the triple dot with an explicit Move button */}
                                                                     <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md bg-secondary/50 px-2 py-1 text-[10px] font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
                                                                         Move
                                                                         <ArrowRight className="h-3 w-3" />
@@ -178,11 +173,11 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
                                                                         <DropdownMenuGroup>
                                                                             <DropdownMenuLabel className="text-xs text-muted-foreground">Move to...</DropdownMenuLabel>
                                                                             <DropdownMenuSeparator />
-                                                                            {COLUMNS.map((c) => (
+                                                                            {BOARD_COLUMNS.map((c) => (
                                                                                 <DropdownMenuItem
                                                                                     key={c.key}
                                                                                     disabled={c.key === app.status}
-                                                                                    onClick={() => updateApplicationStatus(app.id, c.key)}
+                                                                                    onClick={() => updateApplicationStatus(app.id, c.key as Application["status"])}
                                                                                     className="flex items-center justify-between text-xs"
                                                                                 >
                                                                                     {c.label}
@@ -190,6 +185,28 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
                                                                                 </DropdownMenuItem>
                                                                             ))}
                                                                         </DropdownMenuGroup>
+
+                                                                        <DropdownMenuSeparator />
+
+                                                                        <DropdownMenuSub>
+                                                                            <DropdownMenuSubTrigger className="text-xs font-medium text-muted-foreground">
+                                                                                Mark as...
+                                                                            </DropdownMenuSubTrigger>
+                                                                            <DropdownMenuPortal>
+                                                                                <DropdownMenuSubContent>
+                                                                                    {TERMINAL_STATES.map((t) => (
+                                                                                        <DropdownMenuItem
+                                                                                            key={t.key}
+                                                                                            onClick={() => updateApplicationStatus(app.id, t.key as Application["status"])}
+                                                                                            className="flex items-center gap-2 text-xs"
+                                                                                        >
+                                                                                            <t.icon className={`h-3 w-3 ${t.color}`} />
+                                                                                            {t.label}
+                                                                                        </DropdownMenuItem>
+                                                                                    ))}
+                                                                                </DropdownMenuSubContent>
+                                                                            </DropdownMenuPortal>
+                                                                        </DropdownMenuSub>
                                                                     </DropdownMenuContent>
                                                                 </DropdownMenu>
                                                             </div>

@@ -44,7 +44,6 @@ export default function BenefitsSection() {
 
             <div className="mx-auto max-w-6xl px-6">
 
-                {/* Header */}
                 <Reveal variant="fade-up" delay={0} duration={600}>
                     <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
@@ -67,7 +66,6 @@ export default function BenefitsSection() {
                     </div>
                 </Reveal>
 
-                {/* Benefit cards */}
                 <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {BENEFITS.map((benefit, index) => (
                         <Reveal

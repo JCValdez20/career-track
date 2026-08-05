@@ -36,13 +36,11 @@ export default function NotesTab({
             formRef.current?.reset();
         }
         wasPending.current = pending;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pending, state.error]);
 
     return (
         <div className="flex flex-col gap-5">
 
-            {/* Add note form */}
             <form ref={formRef} action={formAction} className="flex flex-col gap-2.5">
                 <textarea
                     name="content"
@@ -73,7 +71,6 @@ export default function NotesTab({
                 </Button>
             </form>
 
-            {/* Notes list */}
             {notes.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/40 py-10 text-center">
                     <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-border/50 bg-muted/30">

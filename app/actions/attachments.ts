@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type ActionState = { error: string | null };
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export async function uploadAttachment(
     applicationId: string,
@@ -21,9 +21,6 @@ export async function uploadAttachment(
         data: { user },
     } = await supabase.auth.getUser();
     if (!user) return { error: "You must be logged in." };
-
-    // Path convention {user_id}/{application_id}/... matches the storage
-    // RLS policy, which checks auth.uid() against the first path segment.
     const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const filePath = `${user.id}/${applicationId}/${Date.now()}-${cleanName}`;
 
