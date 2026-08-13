@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Search, Plus, ArrowUp, ArrowDown, X } from "lucide-react";
+import { Search, Plus, ArrowUp, ArrowDown, X, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import AddApplicationDialog from "./AddApplicationDialog";
 
@@ -16,6 +16,7 @@ const STATUS_OPTIONS = [
     { value: "hired", label: "Hired" },
     { value: "rejected", label: "Rejected" },
     { value: "withdrawn", label: "Withdrawn" },
+    { value: "ghosted", label: "Ghosted (14d+)" }, // Added so the select box syncs with the button
 ];
 
 const SORT_OPTIONS = [
@@ -73,7 +74,6 @@ export default function ApplicationsToolbar() {
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:flex-wrap">
-                {/* ALLOW WRAPPING: Added flex-wrap here so dropdowns don't explode the container */}
                 <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
 
                     <div className="relative min-w-0 flex-1">
@@ -120,6 +120,19 @@ export default function ApplicationsToolbar() {
                         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-card/40 text-muted-foreground backdrop-blur-sm transition-colors hover:border-ring/50 hover:text-foreground"
                     >
                         {currentOrder === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                    </button>
+
+                    {/* NEW GHOSTED FILTER BUTTON */}
+                    <button
+                        type="button"
+                        onClick={() => updateParam("status", currentStatus === "ghosted" ? "all" : "ghosted")}
+                        className={`flex h-9 shrink-0 items-center gap-1.5 rounded-xl border px-3 text-sm font-semibold transition-colors ${currentStatus === "ghosted"
+                                ? "bg-amber-500/20 border-amber-500/40 text-amber-500 shadow-sm"
+                                : "border-border/60 bg-card/40 text-muted-foreground hover:bg-muted hover:text-foreground backdrop-blur-sm"
+                            }`}
+                    >
+                        <AlertCircle className="h-4 w-4" />
+                        <span className="hidden sm:inline">Ghosted</span>
                     </button>
                 </div>
 

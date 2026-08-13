@@ -35,9 +35,19 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
     if (params.q) {
         query = query.or(`company.ilike.%${params.q}%,position.ilike.%${params.q}%`);
     }
-    if (params.status && params.status !== "all") {
+
+    // --- GHOSTED LOGIC: Calculate 14 days ago and filter ---
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+
+    if (params.status === "ghosted") {
+        query = query
+            .in("status", ["applied", "screening", "interview", "test", "offer"])
+            .lte("updated_at", fourteenDaysAgo.toISOString());
+    } else if (params.status && params.status !== "all") {
         query = query.eq("status", params.status);
     }
+
     query = query.order(params.sort ?? "applied_date", { ascending: params.order === "asc" });
 
     const { data: applications } = await query;

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import Reveal from "@/components/ui/Reveal";
+import Logo from "@/components/ui/Logo";
 
 const FOOTER_LINKS = [
     { href: "#problems", label: "Problems" },
@@ -20,20 +20,12 @@ export default function Footer() {
             <div className="mx-auto max-w-6xl px-6 flex flex-col items-center justify-center gap-8">
 
                 <Reveal variant="zoom-in" delay={0} duration={600} threshold={0.1}>
-                    <Link
+                    <Logo
                         href="/"
-                        className="flex items-center group"
-                        aria-label="CareerTrack Home"
-                    >
-                        <Image
-                            src="/images/logov2.png"
-                            alt="CareerTrack Logo"
-                            width={200}
-                            height={50}
-                            className="w-30 sm:w-37.5 md:w-45 object-contain transition-transform group-hover:scale-105"
-                            style={{ height: "auto" }}
-                        />
-                    </Link>
+                        width={150}
+                        className="group"
+                        imageClassName="transition-transform group-hover:scale-105"
+                    />
                 </Reveal>
 
                 <Reveal variant="fade-up" delay={100} duration={600} threshold={0.1}>

@@ -4,6 +4,7 @@ import { useState, useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import Logo from "@/components/ui/Logo";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import AuthToggle from "@/components/auth/AuthToggle";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
@@ -32,17 +33,7 @@ export default function Login() {
 
                 <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full max-w-xl mx-auto">
 
-                    <Link href="/" className="inline-block w-fit" aria-label="Back to home">
-                        <Image
-                            src="/images/logov2.png"
-                            alt="CareerTrack"
-                            width={144}
-                            height={36}
-                            className="w-36 object-contain hover:opacity-90 transition-opacity"
-                            style={{ height: "auto" }}
-                            priority
-                        />
-                    </Link>
+                    <Logo href="/" width={144} imageClassName="hover:opacity-90 transition-opacity" priority />
 
                     <div className="space-y-4 my-auto py-12">
                         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
@@ -89,17 +80,7 @@ export default function Login() {
                     </Link>
 
                     <div className="flex lg:hidden mb-8">
-                        <Link href="/" aria-label="Back to home">
-                            <Image
-                                src="/images/logov2.png"
-                                alt="CareerTrack"
-                                width={112}
-                                height={28}
-                                className="w-28 object-contain hover:opacity-90 transition-opacity"
-                                style={{ height: "auto" }}
-                                priority
-                            />
-                        </Link>
+                        <Logo href="/" width={112} imageClassName="hover:opacity-90 transition-opacity" priority />
                     </div>
 
                     <AuthToggle active="login" />

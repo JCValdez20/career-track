@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { updateApplicationStatus } from "@/app/actions/application";
-import { MapPin, Calendar, FileText, ArrowRight, CheckCircle2, XCircle, ArchiveX } from "lucide-react";
+import { MapPin, Calendar, FileText, ArrowRight, CheckCircle2, XCircle, ArchiveX, AlertCircle } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,6 +19,7 @@ import {
     DropdownMenuSubContent
 } from "@/components/ui/dropdown-menu";
 import type { Application } from "@/types/application";
+
 
 
 const BOARD_COLUMNS = [
@@ -40,6 +41,11 @@ interface KanbanBoardProps {
         hasInterviews?: boolean;
         hasAttachments?: boolean;
     })[];
+}
+
+function getDaysInStage(updatedAt: string) {
+    const days = Math.floor((Date.now() - new Date(updatedAt).getTime()) / 86_400_000);
+    return days;
 }
 
 type BoardState = Record<string, Application[]>;
@@ -144,98 +150,75 @@ export default function KanbanBoard({ applications }: KanbanBoardProps) {
                                             </div>
                                         )}
 
-                                        {columnApps.map((app, index) => (
-                                            <Draggable key={app.id} draggableId={app.id} index={index}>
-                                                {(provided, snapshot) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                        onClick={() => openDetail(app.id)}
-                                                        className={`group relative rounded-xl border p-4 shadow-sm transition-all ${snapshot.isDragging
-                                                            ? "border-ring/50 bg-card rotate-2 shadow-xl z-50 cursor-grabbing"
-                                                            : "border-border/60 bg-card/60 hover:border-ring/50 hover:bg-card/80 cursor-grab"
-                                                            }`}
-                                                        style={provided.draggableProps.style}
-                                                    >
-                                                        <div className="flex items-start justify-between gap-2">
-                                                            <p className="font-semibold text-foreground line-clamp-1">
-                                                                {app.company}
-                                                            </p>
+                                        {columnApps.map((app, index) => {
+                                            // Calculate stagnancy: > 14 days and NOT in a terminal state
+                                            const daysInStage = getDaysInStage(app.updated_at);
+                                            const isStagnant = daysInStage >= 14 && !['hired', 'rejected', 'withdrawn'].includes(app.status);
 
-                                                            <div onClick={(e) => e.stopPropagation()} className="shrink-0 cursor-default">
-                                                                <DropdownMenu>
-                                                                    <DropdownMenuTrigger className="flex items-center gap-1.5 rounded-md bg-secondary/50 px-2 py-1 text-[10px] font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
-                                                                        Move
-                                                                        <ArrowRight className="h-3 w-3" />
-                                                                    </DropdownMenuTrigger>
-                                                                    <DropdownMenuContent align="end" className="w-48">
-                                                                        <DropdownMenuGroup>
-                                                                            <DropdownMenuLabel className="text-xs text-muted-foreground">Move to...</DropdownMenuLabel>
-                                                                            <DropdownMenuSeparator />
-                                                                            {BOARD_COLUMNS.map((c) => (
-                                                                                <DropdownMenuItem
-                                                                                    key={c.key}
-                                                                                    disabled={c.key === app.status}
-                                                                                    onClick={() => updateApplicationStatus(app.id, c.key as Application["status"])}
-                                                                                    className="flex items-center justify-between text-xs"
-                                                                                >
-                                                                                    {c.label}
-                                                                                    {c.key === app.status && <div className="h-1.5 w-1.5 rounded-full bg-foreground" />}
-                                                                                </DropdownMenuItem>
-                                                                            ))}
-                                                                        </DropdownMenuGroup>
+                                            return (
+                                                <Draggable key={app.id} draggableId={app.id} index={index}>
+                                                    {(provided, snapshot) => (
+                                                        <div
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            onClick={() => openDetail(app.id)}
+                                                            className={`group relative rounded-xl border p-4 shadow-sm transition-all ${snapshot.isDragging
+                                                                ? "border-ring/50 bg-card rotate-2 shadow-xl z-50 cursor-grabbing"
+                                                                : "border-border/60 bg-card/60 hover:border-ring/50 hover:bg-card/80 cursor-grab"
+                                                                }`}
+                                                            style={provided.draggableProps.style}
+                                                        >
+                                                            <div className="flex items-start justify-between gap-2">
+                                                                {/* Company Name & Stagnancy Badge */}
+                                                                <div className="flex flex-col gap-1.5 min-w-0">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <p className="font-semibold text-foreground line-clamp-1">
+                                                                            {app.company}
+                                                                        </p>
+                                                                        {isStagnant && (
+                                                                            <span
+                                                                                className="flex items-center gap-1 rounded-md bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-500 border border-amber-500/20 shrink-0"
+                                                                                title={`Stuck in ${app.status} for ${daysInStage} days`}
+                                                                            >
+                                                                                <AlertCircle size={10} />
+                                                                                {daysInStage}d
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                    <p className="text-xs text-muted-foreground line-clamp-1">
+                                                                        {app.position}
+                                                                    </p>
+                                                                </div>
 
-                                                                        <DropdownMenuSeparator />
+                                                                {/* Dropdown Menu (Keep your existing dropdown code here) */}
+                                                                <div onClick={(e) => e.stopPropagation()} className="shrink-0 cursor-default">
+                                                                    {/* ... existing DropdownMenu ... */}
+                                                                </div>
+                                                            </div>
 
-                                                                        <DropdownMenuSub>
-                                                                            <DropdownMenuSubTrigger className="text-xs font-medium text-muted-foreground">
-                                                                                Mark as...
-                                                                            </DropdownMenuSubTrigger>
-                                                                            <DropdownMenuPortal>
-                                                                                <DropdownMenuSubContent>
-                                                                                    {TERMINAL_STATES.map((t) => (
-                                                                                        <DropdownMenuItem
-                                                                                            key={t.key}
-                                                                                            onClick={() => updateApplicationStatus(app.id, t.key as Application["status"])}
-                                                                                            className="flex items-center gap-2 text-xs"
-                                                                                        >
-                                                                                            <t.icon className={`h-3 w-3 ${t.color}`} />
-                                                                                            {t.label}
-                                                                                        </DropdownMenuItem>
-                                                                                    ))}
-                                                                                </DropdownMenuSubContent>
-                                                                            </DropdownMenuPortal>
-                                                                        </DropdownMenuSub>
-                                                                    </DropdownMenuContent>
-                                                                </DropdownMenu>
+                                                            {app.location && (
+                                                                <div className="mt-2.5 flex items-center gap-1 text-[11px] text-muted-foreground/70">
+                                                                    <MapPin className="h-3 w-3 shrink-0 opacity-60" />
+                                                                    <span className="truncate">{app.location}</span>
+                                                                </div>
+                                                            )}
+
+                                                            <div className="mt-3 flex items-center gap-2 border-t border-border/40 pt-2.5 text-[10px] text-muted-foreground">
+                                                                <span className="flex items-center gap-1">
+                                                                    <Calendar className="h-3 w-3 text-violet-400" />
+                                                                    Interview
+                                                                </span>
+                                                                <span className="flex items-center gap-1">
+                                                                    <FileText className="h-3 w-3 text-sky-400" />
+                                                                    Files
+                                                                </span>
                                                             </div>
                                                         </div>
-                                                        <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">
-                                                            {app.position}
-                                                        </p>
-
-                                                        {app.location && (
-                                                            <div className="mt-2.5 flex items-center gap-1 text-[11px] text-muted-foreground/70">
-                                                                <MapPin className="h-3 w-3 shrink-0 opacity-60" />
-                                                                <span className="truncate">{app.location}</span>
-                                                            </div>
-                                                        )}
-
-                                                        <div className="mt-3 flex items-center gap-2 border-t border-border/40 pt-2.5 text-[10px] text-muted-foreground">
-                                                            <span className="flex items-center gap-1">
-                                                                <Calendar className="h-3 w-3 text-violet-400" />
-                                                                Interview
-                                                            </span>
-                                                            <span className="flex items-center gap-1">
-                                                                <FileText className="h-3 w-3 text-sky-400" />
-                                                                Files
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        ))}
+                                                    )}
+                                                </Draggable>
+                                            );
+                                        })}
                                         {provided.placeholder}
                                     </div>
                                 )}

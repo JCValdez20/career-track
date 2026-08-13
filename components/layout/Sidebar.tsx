@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
     LayoutDashboard,
@@ -16,6 +15,7 @@ import {
     X,
     LogOut,
 } from "lucide-react";
+import Logo from "@/components/ui/Logo";
 import { signOut } from "@/app/actions/auth";
 
 export interface SidebarUser {
@@ -155,17 +155,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                     <Menu className="w-5 h-5" />
                 </button>
 
-                <Link href="/dashboard" aria-label="CareerTrack home">
-                    <Image
-                        src="/images/logov2.png"
-                        alt="CareerTrack"
-                        width={112}
-                        height={28}
-                        className="object-contain"
-                        style={{ height: "auto" }}
-                        priority
-                    />
-                </Link>
+                <Logo width={112} priority />
 
                 <button
                     onClick={() => setMobileOpen(true)}
@@ -190,17 +180,9 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                     }`}
             >
                 <div className="h-14 flex items-center justify-between px-4 border-b border-slate-800 shrink-0">
-                    <Link href="/dashboard" onClick={() => setMobileOpen(false)} aria-label="CareerTrack home">
-                        <Image
-                            src="/images/logov2.png"
-                            alt="CareerTrack"
-                            width={120}
-                            height={30}
-                            className="object-contain"
-                            style={{ height: "auto" }}
-                            priority
-                        />
-                    </Link>
+                    <div onClick={() => setMobileOpen(false)}>
+                        <Logo width={120} priority />
+                    </div>
                     <button
                         onClick={() => setMobileOpen(false)}
                         aria-label="Close menu"
@@ -254,17 +236,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                         </button>
                     ) : (
                         <>
-                            <Link href="/dashboard" className="flex items-center justify-center" aria-label="CareerTrack Dashboard">
-                                <Image
-                                    src="/images/logov2.png"
-                                    alt="CareerTrack"
-                                    width={150}
-                                    height={38}
-                                    className="object-contain hover:opacity-90 transition-opacity"
-                                    style={{ height: "auto" }}
-                                    priority
-                                />
-                            </Link>
+                            <Logo width={150} imageClassName="hover:opacity-90 transition-opacity" priority />
                             <button
                                 type="button"
                                 onClick={() => setCollapsed(true)}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { MoreHorizontal, Trash2, ExternalLink, MapPin, Briefcase } from "lucide-react";
+import { MoreHorizontal, Trash2, ExternalLink, MapPin, Briefcase, AlertCircle } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import { deleteApplication } from "@/app/actions/application";
 import type { Application } from "@/types/application";
@@ -41,6 +41,11 @@ function relativeTime(dateStr: string) {
     return `${Math.floor(days / 365)}y ago`;
 }
 
+function getDaysInStage(updatedAt: string | null) {
+    if (!updatedAt) return 0;
+    return Math.floor((Date.now() - new Date(updatedAt).getTime()) / 86_400_000);
+}
+
 export default function ApplicationsTable({ applications }: { applications: Application[] }) {
     const router = useRouter();
     const pathname = usePathname();
@@ -74,77 +79,95 @@ export default function ApplicationsTable({ applications }: { applications: Appl
 
     return (
         <div className="w-full min-w-0 overflow-x-auto rounded-2xl border border-border/60 bg-card/40">
+            {/* Mobile View (List) */}
             <ul className="divide-y divide-border/40 sm:hidden">
-                {applications.map((app) => (
-                    <li key={app.id}>
-                        <div
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => openDetail(app.id)}
-                            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && openDetail(app.id)}
-                            className="group flex w-full cursor-pointer items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-white/[0.035]"
-                        >
+                {applications.map((app) => {
+                    const daysInStage = getDaysInStage(app.updated_at);
+                    const isStagnant = daysInStage >= 14 && !['hired', 'rejected', 'withdrawn'].includes(app.status);
+
+                    return (
+                        <li key={app.id}>
                             <div
-                                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br text-xs font-bold text-white shadow-sm ${avatarGradient(app.company)}`}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => openDetail(app.id)}
+                                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && openDetail(app.id)}
+                                className="group flex w-full cursor-pointer items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-white/[0.035]"
                             >
-                                {getInitials(app.company)}
-                            </div>
-
-                            <div className="min-w-0 flex-1 overflow-hidden">
-                                <p className="truncate font-semibold text-foreground">
-                                    {app.company}
-                                </p>
-
-                                <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                                    {app.position}
-                                </p>
-
-                                <div className="mt-2.5 mb-2 flex items-center">
-                                    <StatusBadge status={app.status} />
+                                <div
+                                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br text-xs font-bold text-white shadow-sm ${avatarGradient(app.company)}`}
+                                >
+                                    {getInitials(app.company)}
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground/60">
-                                    <span className="shrink-0" title={new Date(app.applied_date).toLocaleDateString("en-US")}>
-                                        {relativeTime(app.applied_date)}
-                                    </span>
-                                    {app.location && (
-                                        <span className="flex min-w-0 items-center gap-1">
-                                            <MapPin className="h-3 w-3 shrink-0" />
-                                            <span className="truncate">{app.location}</span>
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div onClick={(e) => e.stopPropagation()} className="shrink-0">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
-                                        <MoreHorizontal className="h-4 w-4" />
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-44">
-                                        {app.job_url && (
-                                            <DropdownMenuItem
-                                                render={<a href={app.job_url} target="_blank" rel="noopener noreferrer" />}
+                                <div className="min-w-0 flex-1 overflow-hidden">
+                                    <div className="flex items-center gap-2">
+                                        <p className="truncate font-semibold text-foreground">
+                                            {app.company}
+                                        </p>
+                                        {isStagnant && (
+                                            <span
+                                                className="flex items-center gap-1 rounded-md bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-500 border border-amber-500/20 shrink-0"
+                                                title={`Stuck in ${app.status} for ${daysInStage} days`}
                                             >
-                                                <ExternalLink className="mr-2 h-3.5 w-3.5" />
-                                                Open job posting
-                                            </DropdownMenuItem>
+                                                <AlertCircle size={10} />
+                                                {daysInStage}d
+                                            </span>
                                         )}
-                                        <DropdownMenuItem
-                                            onClick={(e) => handleDelete(e, app.id)}
-                                            className="text-destructive focus:text-destructive"
-                                        >
-                                            <Trash2 className="mr-2 h-3.5 w-3.5" />
-                                            Delete
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                    </div>
+
+                                    <p className="mt-0.5 truncate text-sm text-muted-foreground">
+                                        {app.position}
+                                    </p>
+
+                                    <div className="mt-2.5 mb-2 flex items-center">
+                                        <StatusBadge status={app.status} />
+                                    </div>
+
+                                    <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground/60">
+                                        <span className="shrink-0" title={new Date(app.applied_date).toLocaleDateString("en-US")}>
+                                            {relativeTime(app.applied_date)}
+                                        </span>
+                                        {app.location && (
+                                            <span className="flex min-w-0 items-center gap-1">
+                                                <MapPin className="h-3 w-3 shrink-0" />
+                                                <span className="truncate">{app.location}</span>
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div onClick={(e) => e.stopPropagation()} className="shrink-0">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="w-44">
+                                            {app.job_url && (
+                                                <DropdownMenuItem
+                                                    render={<a href={app.job_url} target="_blank" rel="noopener noreferrer" />}
+                                                >
+                                                    <ExternalLink className="mr-2 h-3.5 w-3.5" />
+                                                    Open job posting
+                                                </DropdownMenuItem>
+                                            )}
+                                            <DropdownMenuItem
+                                                onClick={(e) => handleDelete(e, app.id)}
+                                                className="text-destructive focus:text-destructive"
+                                            >
+                                                <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                                Delete
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                ))}
+                        </li>
+                    );
+                })}
             </ul>
 
+            {/* Desktop View (Table) */}
             <table className="hidden w-full min-w-150 text-sm sm:table">
                 <thead>
                     <tr className="border-b border-border/60">
@@ -160,70 +183,86 @@ export default function ApplicationsTable({ applications }: { applications: Appl
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
-                    {applications.map((app) => (
-                        <tr
-                            key={app.id}
-                            onClick={() => openDetail(app.id)}
-                            className="group cursor-pointer transition-colors duration-100 hover:bg-white/[0.035]"
-                        >
-                            <td className="px-5 py-3.5">
-                                <div className="flex items-center gap-3">
-                                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br text-[11px] font-bold text-white shadow-sm ${avatarGradient(app.company)}`}>
-                                        {getInitials(app.company)}
+                    {applications.map((app) => {
+                        const daysInStage = getDaysInStage(app.updated_at);
+                        const isStagnant = daysInStage >= 14 && !['hired', 'rejected', 'withdrawn'].includes(app.status);
+
+                        return (
+                            <tr
+                                key={app.id}
+                                onClick={() => openDetail(app.id)}
+                                className="group cursor-pointer transition-colors duration-100 hover:bg-white/[0.035]"
+                            >
+                                <td className="px-5 py-3.5">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br text-[11px] font-bold text-white shadow-sm ${avatarGradient(app.company)}`}>
+                                            {getInitials(app.company)}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-semibold text-foreground">{app.company}</span>
+                                            {isStagnant && (
+                                                <span
+                                                    className="flex items-center gap-1 rounded-md bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-500 border border-amber-500/20 shrink-0"
+                                                    title={`Stuck in ${app.status} for ${daysInStage} days`}
+                                                >
+                                                    <AlertCircle size={10} />
+                                                    {daysInStage}d
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
-                                    <span className="font-semibold text-foreground">{app.company}</span>
-                                </div>
-                            </td>
+                                </td>
 
-                            <td className="max-w-50 px-5 py-3.5 text-muted-foreground">
-                                <span className="line-clamp-1">{app.position}</span>
-                            </td>
+                                <td className="max-w-50 px-5 py-3.5 text-muted-foreground">
+                                    <span className="line-clamp-1">{app.position}</span>
+                                </td>
 
-                            <td className="px-5 py-3.5">
-                                <StatusBadge status={app.status} />
-                            </td>
+                                <td className="px-5 py-3.5">
+                                    <StatusBadge status={app.status} />
+                                </td>
 
-                            <td className="px-5 py-3.5 text-muted-foreground" title={new Date(app.applied_date).toLocaleDateString("en-US")}>
-                                {relativeTime(app.applied_date)}
-                            </td>
+                                <td className="px-5 py-3.5 text-muted-foreground" title={new Date(app.applied_date).toLocaleDateString("en-US")}>
+                                    {relativeTime(app.applied_date)}
+                                </td>
 
-                            <td className="px-5 py-3.5">
-                                {app.location ? (
-                                    <span className="flex items-center gap-1.5 text-muted-foreground">
-                                        <MapPin className="h-3.5 w-3.5 shrink-0 opacity-60" />
-                                        {app.location}
-                                    </span>
-                                ) : (
-                                    <span className="text-muted-foreground/30">—</span>
-                                )}
-                            </td>
+                                <td className="px-5 py-3.5">
+                                    {app.location ? (
+                                        <span className="flex items-center gap-1.5 text-muted-foreground">
+                                            <MapPin className="h-3.5 w-3.5 shrink-0 opacity-60" />
+                                            {app.location}
+                                        </span>
+                                    ) : (
+                                        <span className="text-muted-foreground/30">—</span>
+                                    )}
+                                </td>
 
-                            <td className="px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all group-hover:opacity-100 hover:bg-muted hover:text-foreground">
-                                        <MoreHorizontal className="h-4 w-4" />
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-44">
-                                        {app.job_url && (
+                                <td className="px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all group-hover:opacity-100 hover:bg-muted hover:text-foreground">
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="w-44">
+                                            {app.job_url && (
+                                                <DropdownMenuItem
+                                                    render={<a href={app.job_url} target="_blank" rel="noopener noreferrer" />}
+                                                >
+                                                    <ExternalLink className="mr-2 h-3.5 w-3.5" />
+                                                    Open job posting
+                                                </DropdownMenuItem>
+                                            )}
                                             <DropdownMenuItem
-                                                render={<a href={app.job_url} target="_blank" rel="noopener noreferrer" />}
+                                                onClick={(e) => handleDelete(e, app.id)}
+                                                className="text-destructive focus:text-destructive"
                                             >
-                                                <ExternalLink className="mr-2 h-3.5 w-3.5" />
-                                                Open job posting
+                                                <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                                Delete
                                             </DropdownMenuItem>
-                                        )}
-                                        <DropdownMenuItem
-                                            onClick={(e) => handleDelete(e, app.id)}
-                                            className="text-destructive focus:text-destructive"
-                                        >
-                                            <Trash2 className="mr-2 h-3.5 w-3.5" />
-                                            Delete
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </td>
-                        </tr>
-                    ))}
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

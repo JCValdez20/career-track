@@ -93,6 +93,7 @@ export async function updateApplication(
             location: parsed.data.location || null,
             salary_range: parsed.data.salaryRange || null,
             source: parsed.data.source || null,
+            updated_at: new Date().toISOString(), // Added timestamp refresh
         })
         .eq("id", id);
 
@@ -102,7 +103,6 @@ export async function updateApplication(
     return { error: null };
 }
 
-
 export async function updateApplicationStatus(
     id: string,
     newStatus: string
@@ -111,7 +111,10 @@ export async function updateApplicationStatus(
 
     const { error } = await supabase
         .from("applications")
-        .update({ status: newStatus })
+        .update({
+            status: newStatus,
+            updated_at: new Date().toISOString() // Added timestamp refresh
+        })
         .eq("id", id);
 
     if (error) return { error: error.message };
@@ -152,6 +155,6 @@ export async function deleteApplication(id: string): Promise<ActionState> {
     if (error) return { error: error.message };
 
     revalidatePath("/dashboard/applications");
-    revalidatePath("/dashboard/kanban"); // Ensure kanban updates on delete too
+    revalidatePath("/dashboard/kanban");
     return { error: null };
 }

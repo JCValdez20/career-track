@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import Logo from "@/components/ui/Logo";
 
 const NAV_LINKS = [
     { href: "#problems", label: "Problems" },
@@ -43,22 +43,12 @@ export default function Navbar() {
         >
             <nav className="mx-auto flex h-20 sm:h-24 max-w-6xl items-center justify-between px-4 sm:px-6">
 
-                <Link
+                <Logo
                     href="/"
-                    className="flex items-center shrink-0"
+                    width={120}
                     onClick={() => setOpen(false)}
-                    aria-label="CareerTrack Home"
-                >
-                    <Image
-                        src="/images/logov2.png"
-                        alt="CareerTrack Logo"
-                        width={160}
-                        height={40}
-                        className="w-20 sm:w-30 object-contain"
-                        style={{ height: "auto" }}
-                        priority
-                    />
-                </Link>
+                    priority
+                />
 
                 <ul className="hidden items-center gap-8 md:flex">
                     {NAV_LINKS.map((link) => (
